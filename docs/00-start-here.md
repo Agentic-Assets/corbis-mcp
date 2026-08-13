@@ -5,8 +5,9 @@
 **Audience:** the coding agent and maintainer building the first Corbis MCP
 source package
 
-**Status:** implementation planning is complete. This repository deliberately
-contains documentation only; it is not yet an installable or released plugin.
+**Status:** the initial thin source package was implemented locally at
+`2f0cf5832645ad5fea64582aafd04b07b4d61416`. It has not been reviewed, merged,
+tagged, accepted through a native client, or released.
 
 **Execution goal:** for the full build, readiness, Marketplace, and publication
 contract, read
@@ -35,7 +36,24 @@ immutable Marketplace snapshot of a signed source release.
 - This repository is still private. Public visibility is a later human gate,
   not an implementation side effect.
 
-## What to build in the first source-package PR
+## Current implementation checkpoint
+
+- The source package contains separate Claude Code, Codex, and Cursor
+  descriptors, the two client-specific MCP configuration files, `README.md`,
+  `CHANGELOG.md`, a root-package guard, and a separate unauthenticated endpoint
+  metadata smoke option.
+- Its implementation-time checks and the separate application-readiness
+  observation are recorded in
+  [`docs/maintenance/2026-08/2026-08-13-connector-implementation-evidence.md`](maintenance/2026-08/2026-08-13-connector-implementation-evidence.md).
+- No approved public assets, final public license, public security or support
+  route, source release tag, Marketplace payload, native-client acceptance, or
+  public-directory listing exists.
+
+The checkpoint is source-package validation only. It is not a supported direct
+installation route or proof of OAuth, tool invocation, production readiness,
+Marketplace admission, or directory publication.
+
+## Expected content of a reviewable source-package PR
 
 Build only the thin, root-level package described in
 [the implementation plan](01-build-plan.md):
@@ -94,7 +112,7 @@ web routes. Do not create placeholders and call the package release-ready.
 | Marketplace catalog admission | A digest-bound promoted artifact is cataloged | Any client refreshed, installed, authenticated, or invoked it successfully |
 | Production endpoint returns a tool list | The endpoint responded for the tested principal | Every entitlement, tool, output, OAuth flow, or directory route is healthy |
 
-## First verification checkpoint
+## Verification record required for a source-package PR
 
 Before opening the source-package PR, leave a short evidence record that says:
 
@@ -103,9 +121,10 @@ Before opening the source-package PR, leave a short evidence record that says:
 - which client schemas and validators were used and their versions;
 - which public support, privacy, terms, and documentation URLs were actually
   verified while signed out;
-- whether the application readiness candidate's open audit signal about nested
-  market-ranking output must be resolved before treating it as launch-ready.
+- the separate application's producer-derived nested market-ranking proof and
+  whether it has been independently reviewed, merged, deployed, and read back
+  live.
 
-The final bullet is a handoff risk, not a request to change the application
-from this repository. Route any application remediation to its own repository
-and review path.
+The final bullet is an application gate, not permission to change the
+application from this repository. Route any application remediation through its
+own repository and review path.

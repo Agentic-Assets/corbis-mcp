@@ -73,6 +73,21 @@ application readiness before acting on them.
   reachability, allowlist, and payload digest. Do not run an automatic sync or
   manually edit a promoted `plugins/corbis` snapshot.
 
+### Current source-package maintenance
+
+- The root package contains only the three client descriptors, two MCP
+  descriptors, public-facing source documentation, changelog, and static
+  package test. Keep that boundary intact; this implementation is not a source
+  release or an approved installation route.
+- After changing a descriptor, candidate public text, or package boundary, run
+  `PYTHONDONTWRITEBYTECODE=1 python3 tests/validate_package.py`. Run its
+  separate `--smoke` probe only when a read-only endpoint metadata check is
+  appropriate; it must not authenticate or invoke tools.
+- Record implementation-time observations in
+  `docs/maintenance/`, including the exact source commit and validation scope.
+  Application evidence remains in `agentic-assets-app`; do not treat a local
+  application test as an application merge, deployment, or production readback.
+
 ## Required skills and review
 
 For non-trivial package work, refresh and use the applicable MCP-builder,
