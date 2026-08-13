@@ -40,6 +40,14 @@ Run the static package contract locally with:
 python3 tests/validate_package.py
 ```
 
+The separate release-readiness gate adds the founder-approved public license,
+security, support, and brand-asset requirements. It intentionally fails until
+those decisions and materials exist:
+
+```sh
+python3 tests/validate_package.py --release
+```
+
 The separately opt-in endpoint probe is:
 
 ```sh
@@ -52,6 +60,7 @@ It neither authenticates nor invokes a tool.
 ## Project status
 
 No source release tag, Marketplace payload, client-acceptance record, or
-public-directory listing exists. Final public license, support, security,
-asset, and directory material remains subject to the explicit gates in the
+public-directory listing exists. The release-readiness gate is currently
+expected to fail because final public license, support, security, and brand
+asset material remains subject to the explicit gates in the
 [source record](docs/04-source-record.md).

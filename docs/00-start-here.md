@@ -42,8 +42,8 @@ immutable Marketplace snapshot of a signed source release.
   descriptors, the two client-specific MCP configuration files, `README.md`,
   `CHANGELOG.md`, a root-package guard, and a separate unauthenticated endpoint
   metadata smoke option.
-- Its implementation-time checks and the separate application-readiness
-  observation are recorded in
+- Its implementation-time checks, the release-readiness gate, and the separate
+  application-readiness observation are recorded in
   [`docs/maintenance/2026-08/2026-08-13-connector-implementation-evidence.md`](maintenance/2026-08/2026-08-13-connector-implementation-evidence.md).
 - No approved public assets, final public license, public security or support
   route, source release tag, Marketplace payload, native-client acceptance, or
@@ -100,7 +100,9 @@ web routes. Do not create placeholders and call the package release-ready.
    a license, support address, final public copy, or visibility setting.
 4. Implement the minimal package on a feature branch, with machine-checkable
    contracts and no secrets.
-5. Run local validation and clean direct-install/OAuth tests. Record exact
+5. Run local validation, including `python3 tests/validate_package.py --release`,
+   and clean direct-install/OAuth tests. The release mode is expected to fail
+   until the founder-gated public materials are approved. Record exact
    versions, commands, environment boundaries, and outcomes.
 6. Obtain review and the separate approvals required for merge, source release,
    production deployment, and any public visibility or directory action.

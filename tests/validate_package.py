@@ -5,6 +5,11 @@ Run without network access for descriptor and documentation contracts:
 
     python3 tests/validate_package.py
 
+Pass --release to also require the founder-approved public release material.
+This fails closed until that material has been supplied and reviewed:
+
+    python3 tests/validate_package.py --release
+
 Pass --smoke to perform the intentionally separate, unauthenticated endpoint
 and OAuth protected-resource metadata probes. The smoke probe uses no tokens,
 does not start OAuth, and does not invoke a tool.
@@ -50,6 +55,14 @@ OPTIONAL_PUBLIC_TEXT_FILES = [
     REPOSITORY_ROOT / "SECURITY.md",
     REPOSITORY_ROOT / "SUPPORT.md",
 ]
+RELEASE_REQUIRED_RELATIVE_PATHS = (
+    Path("LICENSE"),
+    Path("SECURITY.md"),
+    Path("SUPPORT.md"),
+    Path("assets/icon.png"),
+    Path("assets/logo.png"),
+    Path("assets/logo-dark.png"),
+)
 ALLOWED_TOP_LEVEL_ENTRIES = {
     ".agents",
     ".claude-plugin",
@@ -185,6 +198,30 @@ def public_package_text_files() -> list[Path]:
     return [file_path for file_path in text_files if file_path.is_file()]
 
 
+def missing_release_material(root: Path = REPOSITORY_ROOT) -> list[str]:
+    """Return approved release paths that are missing, directories, or symlinks.
+
+    The default package checks deliberately allow a reviewable source package
+    before public legal, support, and brand decisions are made. A release
+    attempt must not silently inherit that allowance.
+    """
+
+    return [
+        str(relative_path)
+        for relative_path in RELEASE_REQUIRED_RELATIVE_PATHS
+        if not (root / relative_path).is_file() or (root / relative_path).is_symlink()
+    ]
+
+
+def validate_release_material(root: Path = REPOSITORY_ROOT) -> None:
+    missing = missing_release_material(root)
+    if missing:
+        raise RuntimeError(
+            "Release gate is not satisfied; add reviewed public release material: "
+            + ", ".join(missing)
+        )
+
+
 class PackageContractTests(unittest.TestCase):
     def test_credential_detector_is_specific_to_values(self) -> None:
         self.assertIsNotNone(FORBIDDEN_VALUE_PATTERN.search("Bearer abcdefghijklmnop"))
@@ -211,6 +248,29 @@ class PackageContractTests(unittest.TestCase):
     def test_required_package_files_exist(self) -> None:
         missing = [str(file_path.relative_to(REPOSITORY_ROOT)) for file_path in REQUIRED_PACKAGE_FILES if not file_path.is_file()]
         self.assertEqual(missing, [], f"Missing package files: {', '.join(missing)}")
+
+    def test_release_material_contract_is_explicit_and_rejects_symlinks(self) -> None:
+        from tempfile import TemporaryDirectory
+
+        with TemporaryDirectory() as temporary_directory:
+            root = Path(temporary_directory)
+            self.assertEqual(
+                missing_release_material(root),
+                [str(path) for path in RELEASE_REQUIRED_RELATIVE_PATHS],
+            )
+
+            for relative_path in RELEASE_REQUIRED_RELATIVE_PATHS:
+                candidate = root / relative_path
+                candidate.parent.mkdir(parents=True, exist_ok=True)
+                candidate.write_text("reviewed release material", encoding="utf-8")
+            self.assertEqual(missing_release_material(root), [])
+
+            license_path = root / "LICENSE"
+            release_copy = root / "approved-license-copy"
+            release_copy.write_text(license_path.read_text(encoding="utf-8"), encoding="utf-8")
+            license_path.unlink()
+            license_path.symlink_to(release_copy)
+            self.assertEqual(missing_release_material(root), ["LICENSE"])
 
     def test_manifest_metadata_is_consistent(self) -> None:
         manifests = {name: load_json(file_path) for name, file_path in MANIFEST_FILES.items()}
@@ -365,8 +425,17 @@ def run_smoke_probe() -> None:
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--release",
+        action="store_true",
+        help="Fail closed unless reviewed public legal, support, and asset material is present",
+    )
     parser.add_argument("--smoke", action="store_true", help="Run the separate unauthenticated network smoke probe")
     arguments, unittest_arguments = parser.parse_known_args()
+    test_result = unittest.main(argv=[sys.argv[0], *unittest_arguments], exit=False).result
+    if not test_result.wasSuccessful():
+        raise SystemExit(1)
+    if arguments.release:
+        validate_release_material()
     if arguments.smoke:
         run_smoke_probe()
-    unittest.main(argv=[sys.argv[0], *unittest_arguments])
