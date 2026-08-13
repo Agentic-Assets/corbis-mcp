@@ -329,9 +329,9 @@ class PackageContractTests(unittest.TestCase):
         codex_mcp = load_json(MCP_FILES["codex"])
         cursor_mcp = load_json(MCP_FILES["cursor"])
 
-        self.assertEqual(set(codex_mcp), {"mcp_servers"})
+        self.assertEqual(set(codex_mcp), {"mcpServers"})
         self.assertEqual(set(cursor_mcp), {"mcpServers"})
-        self.assertEqual(codex_mcp["mcp_servers"], {PACKAGE_ID: {"url": ENDPOINT}})
+        self.assertEqual(codex_mcp["mcpServers"], {PACKAGE_ID: {"url": ENDPOINT}})
         self.assertEqual(cursor_mcp["mcpServers"], {PACKAGE_ID: {"url": ENDPOINT}})
 
         claude_manifest = load_json(MANIFEST_FILES["claude"])
