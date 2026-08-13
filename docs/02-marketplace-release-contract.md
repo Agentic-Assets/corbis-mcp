@@ -67,7 +67,7 @@ README.md
 CHANGELOG.md
 LICENSE
 SECURITY.md
-SUPPORT.md                         # only if adopted by the public package
+SUPPORT.md
 ```
 
 If public documentation moves below a dedicated path, add only the named

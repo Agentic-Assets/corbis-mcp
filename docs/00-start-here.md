@@ -42,7 +42,7 @@ immutable Marketplace snapshot of a signed source release.
   descriptors, the two client-specific MCP configuration files, `README.md`,
   `CHANGELOG.md`, a root-package guard, and a separate unauthenticated endpoint
   metadata smoke option.
-- Its implementation-time checks, the release-readiness gate, and the separate
+- Its implementation-time checks, the release-material gate, and the separate
   application-readiness observation are recorded in
   [`docs/maintenance/2026-08/2026-08-13-connector-implementation-evidence.md`](maintenance/2026-08/2026-08-13-connector-implementation-evidence.md).
 - No approved public assets, final public license, public security or support
@@ -68,8 +68,8 @@ Build only the thin, root-level package described in
 - `.cursor-plugin/plugin.json`
 - `.mcp.json` and `mcp.json`
 - approved public assets
-- `README.md`, `CHANGELOG.md`, `LICENSE`, `SECURITY.md`, and either an approved
-  `SUPPORT.md` or an approved public support section in the README
+- `README.md`, `CHANGELOG.md`, `LICENSE`, `SECURITY.md`, and `SUPPORT.md`
+  because the Marketplace v1 allowlist requires a separate support document
 - portable manifest and endpoint smoke tests
 
 The exact file list and public text must be reviewed against current client
@@ -101,8 +101,9 @@ web routes. Do not create placeholders and call the package release-ready.
 4. Implement the minimal package on a feature branch, with machine-checkable
    contracts and no secrets.
 5. Run local validation, including `python3 tests/validate_package.py --release`,
-   and clean direct-install/OAuth tests. The release mode is expected to fail
-   until the founder-gated public materials are approved. Record exact
+   and clean direct-install/OAuth tests. The release-material mode is expected
+   to fail until structural public materials exist; it does not grant founder
+   approval. Record exact
    versions, commands, environment boundaries, and outcomes.
 6. Obtain review and the separate approvals required for merge, source release,
    production deployment, and any public visibility or directory action.

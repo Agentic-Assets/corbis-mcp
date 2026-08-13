@@ -129,9 +129,10 @@ admission, and attestation remain explicit human-gated steps.
 3. A decision to integrate the local producer-derived `screenMarkets`
    nested-ranking contract test with the application readiness work, followed
    by application review, merge, deployment, and live readback.
-4. Controlled reviewer authorization for native Claude Code and Codex CLI
-   installation/OAuth, plus Inspector-equivalent authentication, authorization,
-   invalid-input, and bounded-result checks. No reviewer credentials were used.
+4. Controlled reviewer authorization for native Claude Code, Codex CLI, and
+   Cursor local installation/OAuth, plus Inspector-equivalent authentication,
+   authorization, invalid-input, and bounded-result checks. No reviewer
+   credentials were used.
 5. Explicit source-review, merge, and signed annotated tag authorization.
 6. A merged Marketplace policy/profile, signed-tag promotion, digest-bound
    Claude Code, Codex CLI, and Cursor local evidence, admission, and

@@ -51,8 +51,9 @@ result tests. Record client, host, route, tag/commit, digest, and evidence.
 
 Run application MCP schema/annotation/transport, lint, type, docs, and
 sufficient build/test checks. Run Marketplace fixtures, preflight, preview,
-digest-bound Claude Code and Codex CLI proof, admission, attestation, and final
-gate. Browser-check public routes signed out. A validator or catalog row never
+digest-bound Claude Code, Codex CLI, and Cursor local proof, admission,
+attestation, and final gate. Browser-check public routes signed out. A validator
+or catalog row never
 proves a client, directory, or production route.
 
 ## Deliverables

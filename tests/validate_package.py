@@ -5,8 +5,8 @@ Run without network access for descriptor and documentation contracts:
 
     python3 tests/validate_package.py
 
-Pass --release to also require the founder-approved public release material.
-This fails closed until that material has been supplied and reviewed:
+Pass --release to check structural public release material. This fails closed
+until that material has been supplied, but it does not grant founder approval:
 
     python3 tests/validate_package.py --release
 
@@ -23,6 +23,7 @@ import os
 import re
 import sys
 import unittest
+import zlib
 from datetime import UTC, datetime
 from pathlib import Path
 from urllib.parse import urlparse
@@ -55,14 +56,22 @@ OPTIONAL_PUBLIC_TEXT_FILES = [
     REPOSITORY_ROOT / "SECURITY.md",
     REPOSITORY_ROOT / "SUPPORT.md",
 ]
-RELEASE_REQUIRED_RELATIVE_PATHS = (
+RELEASE_REQUIRED_TEXT_RELATIVE_PATHS = (
     Path("LICENSE"),
     Path("SECURITY.md"),
     Path("SUPPORT.md"),
+)
+RELEASE_REQUIRED_ASSET_RELATIVE_PATHS = (
     Path("assets/icon.png"),
     Path("assets/logo.png"),
     Path("assets/logo-dark.png"),
 )
+RELEASE_REQUIRED_RELATIVE_PATHS = (
+    *RELEASE_REQUIRED_TEXT_RELATIVE_PATHS,
+    *RELEASE_REQUIRED_ASSET_RELATIVE_PATHS,
+)
+PNG_SIGNATURE = b"\x89PNG\r\n\x1a\n"
+MAX_PUBLIC_PNG_BYTES = 5 * 1024 * 1024
 ALLOWED_TOP_LEVEL_ENTRIES = {
     ".agents",
     ".claude-plugin",
@@ -199,7 +208,7 @@ def public_package_text_files() -> list[Path]:
 
 
 def missing_release_material(root: Path = REPOSITORY_ROOT) -> list[str]:
-    """Return approved release paths that are missing, directories, or symlinks.
+    """Return structural release paths that are missing, directories, or symlinks.
 
     The default package checks deliberately allow a reviewable source package
     before public legal, support, and brand decisions are made. A release
@@ -213,13 +222,70 @@ def missing_release_material(root: Path = REPOSITORY_ROOT) -> list[str]:
     ]
 
 
+def validate_release_png(asset: Path, relative: Path) -> None:
+    message = f"Release material has an invalid PNG asset: {relative}"
+    asset_size = asset.stat().st_size
+    if not 45 <= asset_size <= MAX_PUBLIC_PNG_BYTES:
+        raise RuntimeError(message)
+    content = asset.read_bytes()
+    if not content.startswith(PNG_SIGNATURE):
+        raise RuntimeError(message)
+
+    position = len(PNG_SIGNATURE)
+    first_chunk = True
+    saw_idat = False
+    saw_iend = False
+    while position < len(content):
+        if position + 12 > len(content):
+            raise RuntimeError(message)
+        length = int.from_bytes(content[position:position + 4], "big")
+        chunk_type = content[position + 4:position + 8]
+        chunk_end = position + 12 + length
+        if chunk_end > len(content):
+            raise RuntimeError(message)
+        chunk_data = content[position + 8:position + 8 + length]
+        declared_crc = int.from_bytes(content[position + 8 + length:chunk_end], "big")
+        if zlib.crc32(chunk_type + chunk_data) & 0xFFFFFFFF != declared_crc:
+            raise RuntimeError(message)
+        if first_chunk:
+            width = int.from_bytes(chunk_data[:4], "big")
+            height = int.from_bytes(chunk_data[4:8], "big")
+            if chunk_type != b"IHDR" or length != 13 or width <= 0 or height <= 0:
+                raise RuntimeError(message)
+            first_chunk = False
+        elif chunk_type == b"IDAT":
+            saw_idat = True
+        elif chunk_type == b"IEND":
+            if length != 0 or chunk_end != len(content):
+                raise RuntimeError(message)
+            saw_iend = True
+            break
+        position = chunk_end
+    if first_chunk or not saw_idat or not saw_iend:
+        raise RuntimeError(message)
+
+
 def validate_release_material(root: Path = REPOSITORY_ROOT) -> None:
     missing = missing_release_material(root)
     if missing:
         raise RuntimeError(
-            "Release gate is not satisfied; add reviewed public release material: "
+            "Release material is incomplete; add regular public release files: "
             + ", ".join(missing)
         )
+    for relative_path in RELEASE_REQUIRED_TEXT_RELATIVE_PATHS:
+        candidate = root / relative_path
+        try:
+            content = candidate.read_text(encoding="utf-8")
+        except UnicodeDecodeError as exc:
+            raise RuntimeError(f"Release text material must be UTF-8: {relative_path}") from exc
+        if not content.strip():
+            raise RuntimeError(f"Release text material must be non-empty: {relative_path}")
+        if PLACEHOLDER_PATTERN.search(content):
+            raise RuntimeError(f"Release text material contains a placeholder: {relative_path}")
+        if FORBIDDEN_VALUE_PATTERN.search(content) or LOCAL_OR_PRIVATE_PATH_PATTERN.search(content):
+            raise RuntimeError(f"Release text material contains prohibited content: {relative_path}")
+    for relative_path in RELEASE_REQUIRED_ASSET_RELATIVE_PATHS:
+        validate_release_png(root / relative_path, relative_path)
 
 
 class PackageContractTests(unittest.TestCase):
@@ -259,11 +325,32 @@ class PackageContractTests(unittest.TestCase):
                 [str(path) for path in RELEASE_REQUIRED_RELATIVE_PATHS],
             )
 
-            for relative_path in RELEASE_REQUIRED_RELATIVE_PATHS:
+            for relative_path in RELEASE_REQUIRED_TEXT_RELATIVE_PATHS:
                 candidate = root / relative_path
                 candidate.parent.mkdir(parents=True, exist_ok=True)
-                candidate.write_text("reviewed release material", encoding="utf-8")
+                candidate.write_text("Reviewed public release material\n", encoding="utf-8")
+            valid_png = bytes.fromhex(
+                "89504e470d0a1a0a0000000d49484452000000010000000108000000003a7e9b55"
+                "0000000a49444154789c63f80f0001010100b138f6140000000049454e44ae426082"
+            )
+            for relative_path in RELEASE_REQUIRED_ASSET_RELATIVE_PATHS:
+                candidate = root / relative_path
+                candidate.parent.mkdir(parents=True, exist_ok=True)
+                candidate.write_bytes(valid_png)
             self.assertEqual(missing_release_material(root), [])
+            validate_release_material(root)
+
+            support_path = root / "SUPPORT.md"
+            support_path.write_text("", encoding="utf-8")
+            with self.assertRaisesRegex(RuntimeError, "must be non-empty: SUPPORT.md"):
+                validate_release_material(root)
+            support_path.write_text("Reviewed public release material\n", encoding="utf-8")
+
+            icon_path = root / "assets/icon.png"
+            icon_path.write_bytes(b"not a PNG")
+            with self.assertRaisesRegex(RuntimeError, "invalid PNG asset: assets/icon.png"):
+                validate_release_material(root)
+            icon_path.write_bytes(valid_png)
 
             license_path = root / "LICENSE"
             release_copy = root / "approved-license-copy"
@@ -347,6 +434,11 @@ class PackageContractTests(unittest.TestCase):
             "Claude must use the HTTP transport for the remote endpoint",
         )
 
+    def test_readme_matches_the_checked_in_codex_mcp_shape(self) -> None:
+        readme = (REPOSITORY_ROOT / "README.md").read_text(encoding="utf-8")
+        self.assertIn("`mcpServers`", readme)
+        self.assertNotIn("`mcp_servers`", readme)
+
     def test_no_placeholders_credentials_or_unsafe_urls_appear_in_config(self) -> None:
         configuration = {
             **{name: load_json(file_path) for name, file_path in MANIFEST_FILES.items()},
@@ -428,7 +520,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--release",
         action="store_true",
-        help="Fail closed unless reviewed public legal, support, and asset material is present",
+        help="Check structural public legal, support, and asset material; it does not grant human approval",
     )
     parser.add_argument("--smoke", action="store_true", help="Run the separate unauthenticated network smoke probe")
     arguments, unittest_arguments = parser.parse_known_args()

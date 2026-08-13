@@ -43,7 +43,7 @@ corbis-mcp/
 ├── LICENSE
 ├── README.md
 ├── SECURITY.md
-└── SUPPORT.md                     # or an approved README support section
+└── SUPPORT.md                     # required by the Marketplace v1 allowlist
 ```
 
 Only add a file when a supported client, release check, or public user needs
