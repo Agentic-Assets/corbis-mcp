@@ -23,12 +23,21 @@ submission, deployment, or Marketplace action.
 
 ## Current source-repository state
 
-On 2026-08-13, the repository was observed as a private initial seed on
-`main` at `28cd4c172cf86877b9fa8b7580ac2ffb7fdd539c`, containing only
-`.gitattributes`. The documentation branch that introduced this handoff is
-separate from that initial state. Re-read the remote default branch, current
-visibility, branches, and pull requests before any implementation or release
-action.
+The original 2026-08-13 initial-seed observation is historical. The first thin
+source-package implementation is recorded at
+`2f0cf5832645ad5fea64582aafd04b07b4d61416` on
+`feat/corbis-mcp-connector`. It adds the three client descriptors, two
+client-specific MCP configuration files, public-facing source documentation,
+`CHANGELOG.md`, a source-tree ignore guard, and portable static and opt-in
+metadata-smoke checks.
+
+Its implementation-time validation and the exact boundaries of the companion
+application test are recorded in
+[`docs/maintenance/2026-08/2026-08-13-connector-implementation-evidence.md`](maintenance/2026-08/2026-08-13-connector-implementation-evidence.md).
+That commit is not a reviewed or signed source release and proves neither
+native-client acceptance nor a public installation route. Re-read the remote
+default branch, current visibility, branches, pull requests, and signed tags
+before any release action.
 
 ## Upstream planning sources transferred into this handoff
 
@@ -101,26 +110,28 @@ authorizations.
 
 ## Known implementation and evidence gaps
 
-- The source repository has no descriptors, assets, public support material,
-  license, test suite, release, or direct-client evidence yet.
+- The source repository has descriptors and a portable static test suite, but
+  no approved public assets, final public license, public security or support
+  material, source release tag, or direct-client acceptance evidence.
 - The Marketplace has no `corbis` policy, `corbis-mcp-v1` profile, promoted
   payload, catalog entry, digest-bound evidence, or signed attestation yet.
 - Public-directory eligibility, forms, permissions, and client support may
   change. Re-read official documentation immediately before submission.
-- The application candidate requires independent review and live deployment
-  proof; a focused audit raised a nested market-ranking output-schema signal to
-  reconcile in that separate repository.
+- The application candidate still requires an integration decision for local
+  producer-to-schema test commit `c85d1e16b`, independent review, merge,
+  deployment, and live readback.
 
 ## Deferred work menu
 
 ### High priority: source package and production proof
 
-- Build the minimal source package only after the open public-material
-  decisions are resolved.
-- Reconcile the application candidate, including its output-schema audit signal,
-  through its own review process. Then run a redacted authenticated per-tool
-  acceptance matrix and signed-out support/documentation route checks against
-  the deployed endpoint.
+- Resolve the open public-material decisions, review the existing source
+  package, and obtain the explicit source merge and signed-tag authorization.
+- Decide whether to integrate local application test commit `c85d1e16b` with
+  the readiness candidate, then complete its independent review, merge,
+  deployment, and live readback before running a redacted authenticated
+  per-tool acceptance matrix and signed-out support/documentation route checks
+  against the deployed endpoint.
 - Run an OAuth and threat-model review for dynamic registration, PKCE, refresh,
   resource binding, scopes, redirect URIs, and reviewer-account handling.
 

@@ -93,11 +93,15 @@ application review, merge, deployment, OAuth validation, per-tool acceptance
 matrix, output-contract checks, and live readback.
 
 At the time this handoff was prepared, the application readiness work was a
-draft candidate rather than a merged deployment. A subsequent focused audit
-identified a supported nested market-ranking output shape that must be
-reconciled in the application candidate before relying on its output-schema
-claim. That finding belongs to `agentic-assets-app`; it neither expands this
-wrapper nor authorizes a change from this repository.
+draft candidate rather than a merged deployment. A focused follow-up on local
+application branch `fix/corbis-mcp-screen-output-contract` added commit
+`c85d1e16b`, which safe-parses an actual `screenMarkets` producer result with
+the registered `ScreenMarketsOutput` schema and asserts the nested ranking
+components. This establishes a local producer-to-schema check only. It is not
+part of draft PR #1589, a reviewed application change, a merge, deployment, or
+production readback. The remaining application gate belongs to
+`agentic-assets-app`; it neither expands this wrapper nor authorizes a change
+from this repository.
 
 ## Required review outcomes
 
