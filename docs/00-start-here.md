@@ -8,6 +8,11 @@ source package
 **Status:** implementation planning is complete. This repository deliberately
 contains documentation only; it is not yet an installable or released plugin.
 
+**Execution goal:** for the full build, readiness, Marketplace, and publication
+contract, read
+[`goals/2026-08-13-corbis-mcp-complete-build-goal.md`](../goals/2026-08-13-corbis-mcp-complete-build-goal.md)
+after this document. The goal does not replace its explicit approval gates.
+
 ## One-sentence decision
 
 `Agentic-Assets/corbis-mcp` is the sole editable source for the thin Corbis
