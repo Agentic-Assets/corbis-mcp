@@ -20,25 +20,25 @@ approval gates.
 
 ## What shipped
 
-- Root [`AGENTS.md`](../../AGENTS.md) establishes this repository as the sole
+- Root [`AGENTS.md`](../../../AGENTS.md) establishes this repository as the sole
   editable thin connector source and prevents application, research-toolkit, and
   Marketplace-control-plane scope drift.
-- Root [`README.md`](../../README.md) gives the current source-package status,
+- Root [`README.md`](../../../README.md) gives the current source-package status,
   remote endpoint, and source-handoff entry point without representing the
   repository as released.
-- [`docs/00-start-here.md`](../00-start-here.md) gives a cold-start coding
+- [`docs/00-start-here.md`](../../00-start-here.md) gives a cold-start coding
   agent the selected model, required sequence, explicit non-equivalences, and
   first verification checkpoint.
-- [`docs/01-build-plan.md`](../01-build-plan.md) specifies the root package
+- [`docs/01-build-plan.md`](../../01-build-plan.md) specifies the root package
   tree, descriptor constraints, tests, exclusions, and phased source-release
   plan.
-- [`docs/02-marketplace-release-contract.md`](../02-marketplace-release-contract.md)
+- [`docs/02-marketplace-release-contract.md`](../../02-marketplace-release-contract.md)
   makes the later `corbis@agentic-assets` snapshot one-way, signed-tag,
   allowlisted, digest-bound, and evidence-gated.
-- [`docs/03-security-and-acceptance.md`](../03-security-and-acceptance.md)
+- [`docs/03-security-and-acceptance.md`](../../03-security-and-acceptance.md)
   records the OAuth, secret, public-copy, protocol, and separate-client proof
   boundaries.
-- [`docs/04-source-record.md`](../04-source-record.md) records decisions,
+- [`docs/04-source-record.md`](../../04-source-record.md) records decisions,
   source planning provenance, known gaps, human gates, and current primary
   references.
 

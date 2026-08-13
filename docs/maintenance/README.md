@@ -1,0 +1,21 @@
+# Maintenance records
+
+This directory preserves dated internal closeouts and forward queues. It is not
+part of the public connector package or its future Marketplace payload.
+
+## Layout
+
+- Store records in `YYYY-MM/` directories, using their existing
+  `YYYY-MM-DD-<subject>-<type>.md` filenames.
+- Keep one closeout record and, where useful, one forward queue per substantive
+  branch or work session.
+- Link the date, branch, commits, verification, decisions, deferred work, and
+  human gates in the closeout. Keep the forward queue as a prioritized menu,
+  not an execution authorization.
+- Do not rename records solely to change their category. The monthly archive is
+  the primary navigation and preserves chronological context.
+
+## Current archive
+
+- [`2026-08/`](2026-08/) contains the first Corbis MCP source-handoff closeout
+  and its forward queue.
