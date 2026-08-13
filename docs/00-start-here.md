@@ -5,9 +5,9 @@
 **Audience:** the coding agent and maintainer building the first Corbis MCP
 source package
 
-**Status:** the initial thin source package was implemented locally at
-`2f0cf5832645ad5fea64582aafd04b07b4d61416`. It has not been reviewed, merged,
-tagged, accepted through a native client, or released.
+**Status:** the initial thin source package merged through PR #2 at
+`ec00b9252366601acd916d0a464e8d0eb18ffaee`. It has not been tagged, accepted
+through a native client, promoted to the Marketplace, or released.
 
 **Execution goal:** for the full build, readiness, Marketplace, and publication
 contract, read
@@ -48,6 +48,11 @@ immutable Marketplace snapshot of a signed source release.
 - No approved public assets, final public license, public security or support
   route, source release tag, Marketplace payload, native-client acceptance, or
   public-directory listing exists.
+
+The Marketplace profile is being prepared separately. It still cannot admit
+this connector until the source has the required public release material, a
+signed source tag, and digest-bound Codex CLI, Claude Code, and Cursor local
+acceptance evidence.
 
 The checkpoint is source-package validation only. It is not a supported direct
 installation route or proof of OAuth, tool invocation, production readiness,

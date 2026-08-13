@@ -24,20 +24,20 @@ submission, deployment, or Marketplace action.
 ## Current source-repository state
 
 The original 2026-08-13 initial-seed observation is historical. The first thin
-source-package implementation is recorded at
-`2f0cf5832645ad5fea64582aafd04b07b4d61416` on
-`feat/corbis-mcp-connector`. It adds the three client descriptors, two
-client-specific MCP configuration files, public-facing source documentation,
-`CHANGELOG.md`, a source-tree ignore guard, and portable static and opt-in
-metadata-smoke checks.
+source-package implementation at `2f0cf5832645ad5fea64582aafd04b07b4d61416`
+merged through PR #2 at
+`ec00b9252366601acd916d0a464e8d0eb18ffaee` on private `main`. It adds the
+three client descriptors, two client-specific MCP configuration files,
+public-facing source documentation, `CHANGELOG.md`, a source-tree ignore
+guard, and portable static and opt-in metadata-smoke checks.
 
 Its implementation-time validation and the exact boundaries of the companion
 application test are recorded in
 [`docs/maintenance/2026-08/2026-08-13-connector-implementation-evidence.md`](maintenance/2026-08/2026-08-13-connector-implementation-evidence.md).
-That commit is not a reviewed or signed source release and proves neither
-native-client acceptance nor a public installation route. Re-read the remote
-default branch, current visibility, branches, pull requests, and signed tags
-before any release action.
+The merged source is not a signed source release and proves neither native-
+client acceptance nor a public installation route. Re-read the remote default
+branch, current visibility, branches, pull requests, and signed tags before
+any release action.
 
 ## Upstream planning sources transferred into this handoff
 
@@ -102,8 +102,7 @@ following:
   changes;
 - use of controlled reviewer accounts or credentials;
 - OpenAI or Anthropic submission, publication, and launch communication; or
-- Marketplace policy/profile changes, promotion, admission, attestation, or
-  client-support claim.
+- Marketplace promotion, admission, attestation, or client-support claim.
 
 An approval for source-package implementation does not imply any of these
 authorizations.
@@ -113,8 +112,9 @@ authorizations.
 - The source repository has descriptors and a portable static test suite, but
   no approved public assets, final public license, public security or support
   material, source release tag, or direct-client acceptance evidence.
-- The Marketplace has no `corbis` policy, `corbis-mcp-v1` profile, promoted
-  payload, catalog entry, digest-bound evidence, or signed attestation yet.
+- The Marketplace feature branch prepares the `corbis` policy and
+  `corbis-mcp-v1` profile, but there is no promoted payload, catalog entry,
+  digest-bound evidence, or signed attestation.
 - Public-directory eligibility, forms, permissions, and client support may
   change. Re-read official documentation immediately before submission.
 - The application candidate still requires an integration decision for local
@@ -126,7 +126,7 @@ authorizations.
 ### High priority: source package and production proof
 
 - Resolve the open public-material decisions, review the existing source
-  package, and obtain the explicit source merge and signed-tag authorization.
+  package, and obtain the explicit signed-tag authorization.
 - Decide whether to integrate local application test commit `c85d1e16b` with
   the readiness candidate, then complete its independent review, merge,
   deployment, and live readback before running a redacted authenticated
@@ -137,10 +137,11 @@ authorizations.
 
 ### High priority: required private Marketplace lane
 
-- Implement the dedicated `corbis-mcp-v1` Marketplace profile and root-payload
-  promotion support, with containment and allowlist tests.
-- Promote only a signed source tag, bind Claude Code and Codex CLI proof to the
-  resulting digest, then admit and attest `corbis@agentic-assets`.
+- Review and land the dedicated `corbis-mcp-v1` Marketplace profile and
+  root-payload promotion support, with containment and allowlist tests.
+- Promote only a signed source tag, bind Claude Code, Codex CLI, and Cursor
+  local proof to the resulting digest, then admit and attest
+  `corbis@agentic-assets`.
 
 ### Medium priority: public discovery and wider clients
 

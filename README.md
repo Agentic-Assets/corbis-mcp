@@ -8,9 +8,9 @@ workflows, credentials, or a fixed copy of the server's tool catalog. Tool
 availability remains governed by the authenticated account and the production
 service.
 
-This branch contains the initial client descriptors and portable static checks.
-It is not a released plugin and must not be presented as a supported direct
-installation route. The intended private Marketplace package is
+The repository contains the initial client descriptors and portable static
+checks. It is not a released plugin and must not be presented as a supported
+direct installation route. The intended private Marketplace package is
 `corbis@agentic-assets`, promoted only as an immutable snapshot of a reviewed
 signed source release. Marketplace availability, direct-client acceptance,
 public visibility, and directory publication are separate milestones.
