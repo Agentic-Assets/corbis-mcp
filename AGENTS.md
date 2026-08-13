@@ -81,6 +81,19 @@ agentic-assets-brand-kit guidance. Use the current official client validators
 instead of copying a historical manifest example. Complete an adversarial and
 security review before any release-candidate decision.
 
+### Project-local client guidance
+
+- **Plugin Structure** guides the Claude descriptor and `.claude-plugin/`
+  layout.
+- **plugin-creator** guides `.codex-plugin/plugin.json`; do not use its
+  scaffold or local-Marketplace generator in this root-level source package.
+- **chatgpt-apps** provides docs-first ChatGPT MCP compatibility and submission
+  guidance. This connector remains tool-only: it does not authorize a local
+  server, widget, or static tool surface.
+
+These skills supplement, never replace, the current official client schemas,
+validators, and distinct acceptance evidence for each client.
+
 ## Before declaring work complete
 
 Report separately:
