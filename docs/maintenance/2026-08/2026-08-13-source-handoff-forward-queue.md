@@ -76,3 +76,13 @@ and founder authorization before acting.
   Use current OpenAI, Anthropic, Claude Code, Codex, Cursor, and MCP primary
   documentation and validators. Do not copy this handoff's historical examples
   as live schema authority.
+
+## Follow-up after release-material gate hardening
+
+- **Keep semantic image validation dependency-free**
+  (confidence: implemented boundary; priority: low)
+  The source-package gate now validates PNG framing, compressed data, and
+  decoded dimensions without a runtime image dependency. If future public
+  assets require rendering-specific checks beyond this structural boundary,
+  evaluate them as a separate approved validation lane rather than expanding
+  this thin connector package opportunistically.
