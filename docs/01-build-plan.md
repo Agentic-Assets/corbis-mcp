@@ -41,6 +41,7 @@ corbis-mcp/
 ├── AGENTS.md
 ├── CHANGELOG.md
 ├── LICENSE
+├── provenance.json              # empty allowlisted source file
 ├── README.md
 ├── SECURITY.md
 └── SUPPORT.md                     # required by the Marketplace v1 allowlist
@@ -48,7 +49,9 @@ corbis-mcp/
 
 Only add a file when a supported client, release check, or public user needs
 it. A root-level source package is intentional. Do not add a duplicate
-`plugin/` subtree merely for a future Marketplace tool.
+`plugin/` subtree merely for a future Marketplace tool. `provenance.json` is
+required by the Marketplace allowlist, remains empty in source, and asserts no
+promotion, tag, digest, evidence, or attestation fact.
 
 ## Descriptor contract
 
