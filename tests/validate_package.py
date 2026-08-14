@@ -231,6 +231,22 @@ def public_package_text_files() -> list[Path]:
     return [file_path for file_path in text_files if file_path.is_file()]
 
 
+def is_regular_release_file(root: Path, relative_path: Path) -> bool:
+    """Return whether a required release path is a non-symlinked regular file.
+
+    Every path component must be a real directory or file in the source tree.
+    Checking only the leaf is insufficient because ``assets/`` could itself be
+    a symlink to content absent from a signed source tag.
+    """
+
+    candidate = root
+    for component in relative_path.parts:
+        candidate /= component
+        if candidate.is_symlink():
+            return False
+    return candidate.is_file()
+
+
 def missing_release_material(root: Path = REPOSITORY_ROOT) -> list[str]:
     """Return structural release paths that are missing, directories, or symlinks.
 
@@ -242,7 +258,7 @@ def missing_release_material(root: Path = REPOSITORY_ROOT) -> list[str]:
     return [
         str(relative_path)
         for relative_path in RELEASE_REQUIRED_RELATIVE_PATHS
-        if not (root / relative_path).is_file() or (root / relative_path).is_symlink()
+        if not is_regular_release_file(root, relative_path)
     ]
 
 
@@ -514,6 +530,22 @@ class PackageContractTests(unittest.TestCase):
             license_path.unlink()
             license_path.symlink_to(release_copy)
             self.assertEqual(missing_release_material(root), ["LICENSE"])
+
+            license_path.unlink()
+            license_path.write_text("Reviewed public release material\n", encoding="utf-8")
+            assets_path = root / "assets"
+            for relative_path in RELEASE_REQUIRED_ASSET_RELATIVE_PATHS:
+                (root / relative_path).unlink()
+            assets_path.rmdir()
+            copied_assets_path = root / "approved-brand-assets"
+            copied_assets_path.mkdir()
+            for relative_path in RELEASE_REQUIRED_ASSET_RELATIVE_PATHS:
+                (copied_assets_path / relative_path.name).write_bytes(valid_png)
+            assets_path.symlink_to(copied_assets_path, target_is_directory=True)
+            self.assertEqual(
+                missing_release_material(root),
+                [str(path) for path in RELEASE_REQUIRED_ASSET_RELATIVE_PATHS],
+            )
 
     def test_manifest_metadata_is_consistent(self) -> None:
         manifests = {name: load_json(file_path) for name, file_path in MANIFEST_FILES.items()}
