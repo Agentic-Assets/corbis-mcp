@@ -45,14 +45,18 @@ immutable Marketplace snapshot of a signed source release.
 - Its implementation-time checks, the release-material gate, and the separate
   application-readiness observation are recorded in
   [`docs/maintenance/2026-08/2026-08-13-connector-implementation-evidence.md`](maintenance/2026-08/2026-08-13-connector-implementation-evidence.md).
-- No approved public assets, final public license, public security or support
-  route, source release tag, Marketplace payload, native-client acceptance, or
-  public-directory listing exists.
+- Candidate Corbis image assets are copied from the production application's
+  default branch. Their public-release approval remains a human gate. Final
+  public license, security, and support material, a source release tag,
+  Marketplace payload, native-client acceptance, and a public-directory listing
+  do not exist.
 
-The Marketplace profile is being prepared separately. It still cannot admit
-this connector until the source has the required public release material, a
-signed source tag, and digest-bound Codex CLI, Claude Code, and Cursor local
-acceptance evidence.
+At the 2026-08-14 readback of Marketplace main
+`9af39cab5b1ff5e415c6ac50bd790aa107aa5ef0`, the dedicated `corbis` policy and
+`corbis-mcp-v1` runtime profile already existed. The Marketplace still cannot
+admit this connector until the source has every required release file, a signed
+source tag, and digest-bound Claude Code, Codex CLI, and Cursor local acceptance
+evidence. Revalidate the live policy and allowlist immediately before promotion.
 
 The checkpoint is source-package validation only. It is not a supported direct
 installation route or proof of OAuth, tool invocation, production readiness,
@@ -70,6 +74,8 @@ Build only the thin, root-level package described in
 - approved public assets
 - `README.md`, `CHANGELOG.md`, `LICENSE`, `SECURITY.md`, and `SUPPORT.md`
   because the Marketplace v1 allowlist requires a separate support document
+- the empty `provenance.json` required by the Marketplace allowlist. It asserts
+  no promotion, digest, evidence, or attestation fact
 - portable manifest and endpoint smoke tests
 
 The exact file list and public text must be reviewed against current client
@@ -84,9 +90,9 @@ web routes. Do not create placeholders and call the package release-ready.
   scaffolding from Corbis Research.
 - Credentials, reviewer accounts, source code from the private application,
   user data, client caches, or a custom browser UI.
-- Marketplace catalog entries, Marketplace provenance, Marketplace evidence,
-  or an automatic sync. Those belong in the Marketplace only after the source
-  release and direct-client evidence gates.
+- Marketplace catalog entries, Marketplace evidence, Marketplace attestations,
+  or an automatic sync. The source-required `provenance.json` is release
+  metadata, not a Marketplace catalog, evidence record, or attestation.
 
 ## Required sequence
 

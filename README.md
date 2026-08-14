@@ -41,8 +41,8 @@ python3 tests/validate_package.py
 ```
 
 The separate release-material gate checks regular, non-empty public license,
-security, support, and CRC-valid PNG brand assets. It intentionally fails until
-those materials exist:
+security, support, and structurally decoded PNG brand assets. It intentionally fails
+until every required public material exists:
 
 ```sh
 python3 tests/validate_package.py --release
@@ -65,6 +65,8 @@ It neither authenticates nor invokes a tool.
 
 No source release tag, Marketplace payload, client-acceptance record, or
 public-directory listing exists. The release-material gate is currently
-expected to fail because final public license, support, security, and brand
-asset material remains subject to the explicit gates in the
-[source record](docs/04-source-record.md).
+expected to fail because final public license, support, and security material
+remain subject to the explicit gates in the
+[source record](docs/04-source-record.md). `provenance.json` is an allowlisted
+empty source file. It asserts no release tag, payload digest, client evidence,
+or attestation.

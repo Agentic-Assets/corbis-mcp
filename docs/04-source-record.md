@@ -109,12 +109,16 @@ authorizations.
 
 ## Known implementation and evidence gaps
 
-- The source repository has descriptors and a portable static test suite, but
-  no approved public assets, final public license, public security or support
-  material, source release tag, or direct-client acceptance evidence.
-- The Marketplace feature branch prepares the `corbis` policy and
-  `corbis-mcp-v1` profile, but there is no promoted payload, catalog entry,
-  digest-bound evidence, or signed attestation.
+- The source repository has descriptors, the empty allowlisted
+  `provenance.json`, candidate Corbis image assets copied from the production
+  application's default branch, and a portable static test suite. The image
+  assets still require public-release approval. The repository has no final
+  public license, public security or support material, source release tag, or
+  direct-client acceptance evidence.
+- Marketplace main contained the `corbis` policy and `corbis-mcp-v1` profile
+  at `9af39cab5b1ff5e415c6ac50bd790aa107aa5ef0` on 2026-08-14. There is no
+  promoted payload, catalog entry, digest-bound evidence, or signed
+  attestation.
 - Public-directory eligibility, forms, permissions, and client support may
   change. Re-read official documentation immediately before submission.
 - The application candidate still requires an integration decision for local
@@ -137,8 +141,9 @@ authorizations.
 
 ### High priority: required private Marketplace lane
 
-- Review and land the dedicated `corbis-mcp-v1` Marketplace profile and
-  root-payload promotion support, with containment and allowlist tests.
+- Revalidate the merged dedicated `corbis-mcp-v1` Marketplace profile and
+  root-payload promotion support, including containment and allowlist tests,
+  before a source tag is proposed.
 - Promote only a signed source tag, bind Claude Code, Codex CLI, and Cursor
   local proof to the resulting digest, then admit and attest
   `corbis@agentic-assets`.

@@ -45,11 +45,15 @@ MCP_FILES = {
     "codex": REPOSITORY_ROOT / ".mcp.json",
     "cursor": REPOSITORY_ROOT / "mcp.json",
 }
+SOURCE_PROVENANCE_FILE = REPOSITORY_ROOT / "provenance.json"
+CLAUDE_BRIDGE_FILE = REPOSITORY_ROOT / "CLAUDE.md"
+CANONICAL_CLAUDE_BRIDGE = "# AGENTS.md is the canonical context file. Only add context there.\n@AGENTS.md\n"
 REQUIRED_PACKAGE_FILES = [
     *MANIFEST_FILES.values(),
     *MCP_FILES.values(),
     REPOSITORY_ROOT / "README.md",
     REPOSITORY_ROOT / "CHANGELOG.md",
+    SOURCE_PROVENANCE_FILE,
 ]
 OPTIONAL_PUBLIC_TEXT_FILES = [
     REPOSITORY_ROOT / "LICENSE",
@@ -115,6 +119,7 @@ ALLOWED_TOP_LEVEL_ENTRIES = {
     "docs",
     "goals",
     "mcp.json",
+    "provenance.json",
     "skills-lock.json",
     "tests",
 }
@@ -286,6 +291,34 @@ def expected_png_decoded_size(
     return total_size
 
 
+def validate_png_scanline_filters(
+    decoded: bytes,
+    width: int,
+    height: int,
+    bit_depth: int,
+    color_type: int,
+    interlace_method: int,
+) -> bool:
+    """Return whether every PNG scanline has a filter allowed by method zero."""
+
+    channels = PNG_CHANNELS[color_type]
+
+    def scanline_size(pixel_width: int) -> int:
+        return 1 + (pixel_width * channels * bit_depth + 7) // 8
+
+    passes = ((0, 0, 1, 1),) if interlace_method == 0 else ADAM7_PASSES
+    position = 0
+    for start_x, start_y, step_x, step_y in passes:
+        pass_width = max(0, (width - start_x + step_x - 1) // step_x)
+        pass_height = max(0, (height - start_y + step_y - 1) // step_y)
+        scanline_length = scanline_size(pass_width)
+        for _ in range(pass_height if pass_width else 0):
+            if position >= len(decoded) or decoded[position] > 4:
+                return False
+            position += scanline_length
+    return position == len(decoded)
+
+
 def validate_release_png(asset: Path, relative: Path) -> None:
     message = f"Release material has an invalid PNG asset: {relative}"
     asset_size = asset.stat().st_size
@@ -299,6 +332,7 @@ def validate_release_png(asset: Path, relative: Path) -> None:
     first_chunk = True
     saw_idat = False
     saw_iend = False
+    saw_plte = False
     idat_chunks: list[bytes] = []
     after_idat = False
     expected_decoded_size: int | None = None
@@ -340,6 +374,10 @@ def validate_release_png(asset: Path, relative: Path) -> None:
             if expected_decoded_size > MAX_PUBLIC_PNG_DECODED_BYTES:
                 raise RuntimeError(message)
             first_chunk = False
+        elif chunk_type == b"PLTE":
+            if saw_idat or saw_plte or color_type not in {2, 3, 6} or not 3 <= length <= 768 or length % 3:
+                raise RuntimeError(message)
+            saw_plte = True
         elif chunk_type == b"IDAT":
             if after_idat:
                 raise RuntimeError(message)
@@ -358,24 +396,34 @@ def validate_release_png(asset: Path, relative: Path) -> None:
             if chunk_type[0] & 0x20 == 0:
                 raise RuntimeError(message)
         position = chunk_end
-    if first_chunk or not saw_idat or not saw_iend or expected_decoded_size is None:
+    if (
+        first_chunk
+        or not saw_idat
+        or not saw_iend
+        or expected_decoded_size is None
+        or (color_type == 3 and not saw_plte)
+    ):
         raise RuntimeError(message)
 
     try:
         decompressor = zlib.decompressobj()
         decoded_size = 0
+        decoded_chunks: list[bytes] = []
         for chunk_data in idat_chunks:
             remaining = chunk_data
             while remaining:
                 decoded = decompressor.decompress(remaining, 64 * 1024)
                 decoded_size += len(decoded)
+                decoded_chunks.append(decoded)
                 if decoded_size > MAX_PUBLIC_PNG_DECODED_BYTES:
                     raise RuntimeError(message)
                 next_remaining = decompressor.unconsumed_tail
                 if next_remaining == remaining and not decoded:
                     raise RuntimeError(message)
                 remaining = next_remaining
-        decoded_size += len(decompressor.flush(64 * 1024))
+        flushed = decompressor.flush(64 * 1024)
+        decoded_size += len(flushed)
+        decoded_chunks.append(flushed)
     except zlib.error as exc:
         raise RuntimeError(message) from exc
     if (
@@ -383,6 +431,9 @@ def validate_release_png(asset: Path, relative: Path) -> None:
         or decoded_size != expected_decoded_size
         or not decompressor.eof
         or decompressor.unused_data
+        or not validate_png_scanline_filters(
+            b"".join(decoded_chunks), width, height, bit_depth, color_type, interlace_method
+        )
     ):
         raise RuntimeError(message)
 
@@ -436,6 +487,9 @@ class PackageContractTests(unittest.TestCase):
     def test_required_package_files_exist(self) -> None:
         missing = [str(file_path.relative_to(REPOSITORY_ROOT)) for file_path in REQUIRED_PACKAGE_FILES if not file_path.is_file()]
         self.assertEqual(missing, [], f"Missing package files: {', '.join(missing)}")
+
+    def test_claude_bridge_is_the_canonical_two_line_stub(self) -> None:
+        self.assertEqual(CLAUDE_BRIDGE_FILE.read_text(encoding="utf-8"), CANONICAL_CLAUDE_BRIDGE)
 
     def test_release_material_contract_is_explicit_and_rejects_symlinks(self) -> None:
         from tempfile import TemporaryDirectory
@@ -522,6 +576,25 @@ class PackageContractTests(unittest.TestCase):
             icon_path.write_bytes(short_scanline_png)
             with self.assertRaisesRegex(RuntimeError, "invalid PNG asset: assets/icon.png"):
                 validate_release_material(root)
+
+            invalid_filter_png = (
+                png_header
+                + png_chunk(b"IDAT", zlib.compress(b"\x05\x00"))
+                + png_chunk(b"IEND", b"")
+            )
+            icon_path.write_bytes(invalid_filter_png)
+            with self.assertRaisesRegex(RuntimeError, "invalid PNG asset: assets/icon.png"):
+                validate_release_material(root)
+
+            indexed_without_palette_png = (
+                PNG_SIGNATURE
+                + png_chunk(b"IHDR", bytes.fromhex("00000001000000010103000000"))
+                + png_chunk(b"IDAT", zlib.compress(b"\x00\x00"))
+                + png_chunk(b"IEND", b"")
+            )
+            icon_path.write_bytes(indexed_without_palette_png)
+            with self.assertRaisesRegex(RuntimeError, "invalid PNG asset: assets/icon.png"):
+                validate_release_material(root)
             icon_path.write_bytes(valid_png)
 
             license_path = root / "LICENSE"
@@ -568,6 +641,14 @@ class PackageContractTests(unittest.TestCase):
         codex_interface = manifests["codex"].get("interface")
         self.assertIsInstance(codex_interface, dict)
         self.assertEqual(codex_interface.get("displayName"), DISPLAY_NAME)
+
+    def test_source_provenance_describes_only_the_source_candidate(self) -> None:
+        provenance = load_json(SOURCE_PROVENANCE_FILE)
+        self.assertEqual(provenance, {})
+        self.assertFalse(
+            {"source_tag", "source_tag_object", "source_commit", "payload_digest"}.intersection(provenance),
+            "Source provenance must not assert promotion-time tag or digest facts",
+        )
 
     def test_manifests_have_no_undeclared_components_or_local_assets(self) -> None:
         for manifest_name, file_path in MANIFEST_FILES.items():
@@ -631,6 +712,7 @@ class PackageContractTests(unittest.TestCase):
         configuration = {
             **{name: load_json(file_path) for name, file_path in MANIFEST_FILES.items()},
             **{name: load_json(file_path) for name, file_path in MCP_FILES.items()},
+            "source_provenance": load_json(SOURCE_PROVENANCE_FILE),
         }
         all_strings = list(iter_strings(configuration))
         all_keys = list(iter_keys(configuration))
