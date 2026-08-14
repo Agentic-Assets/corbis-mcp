@@ -13,12 +13,12 @@ acceptance record, Marketplace admission, or directory publication record.
 
 - Added independent Claude Code, Codex, and Cursor manifests at version
   `0.1.0`.
-- Added the Codex-specific `.mcp.json` `mcp_servers` map and the Cursor-specific
-  `mcp.json` `mcpServers` map. Both name `corbis` and point exactly to
+- Added the Codex-specific `.mcp.json` and the Cursor-specific `mcp.json`
+  `mcpServers` maps. Both name `corbis` and point exactly to
   `https://www.corbis.ai/api/mcp/universal`.
-- Kept the Claude HTTP configuration inline in its own manifest. Claude and
-  Codex use incompatible top-level JSON shapes for their MCP configuration, so
-  the source package does not pretend that one parser contract proves both.
+- Kept the Claude HTTP configuration inline in its own manifest. The client
+  adapters remain separate files and acceptance lanes, so one parser contract
+  cannot prove another client's installation or OAuth behavior.
 - Added `tests/validate_package.py`, a Python-standard-library static contract
   check with an explicit, separate unauthenticated metadata smoke option. It
   rejects caches, build artifacts, runtime/dependency manifests, and
@@ -42,7 +42,7 @@ All observations below were made on 2026-08-13 in this workspace.
 | JSON parse for the five JSON files | Passed | JSON syntax only |
 | Claude Code `2.1.231`, staged-payload `claude plugin validate <payload> --strict` | Passed | The isolated Claude connector payload's strict manifest validation |
 | Claude Code strict validation at repository root | Blocked only by the company-required root `CLAUDE.md` bridge, which Claude reports is not a plugin component | This is a source-repository layout warning, not a connector manifest failure. The future Marketplace allowlist excludes maintainer material. |
-| Codex CLI `0.147.0` | No generic `codex plugin validate` command exposed; an ephemeral `mcp_servers.corbis.url` configuration resolved as streamable HTTP at the exact endpoint | The Codex descriptor received JSON, portable-contract, and non-persistent direct-config parsing validation. Native plugin installation/OAuth remains untested. |
+| Codex CLI `0.147.0` | No generic `codex plugin validate` command exposed; an ephemeral `mcp_servers.corbis.url` configuration resolved as streamable HTTP at the exact endpoint | The separate Codex configuration received non-persistent parsing validation. It did not validate a plugin `.mcp.json` file, native plugin installation, or OAuth. |
 | Cursor `3.15.19` | No generic platform CLI validator exposed | The Cursor descriptor received JSON and portable-contract validation. Native local load remains untested. |
 | Added-file secret scan and dependency inventory | No credential pattern or runtime dependency found | Static source review only |
 
@@ -54,13 +54,13 @@ and did not invoke a tool.
 
 A focused read-only review identified two potential packaging concerns. The
 cache and build-artifact gap was confirmed and addressed with the source-tree
-guard and `.gitignore` rule above. The reviewer also questioned Codex's wrapped
-`mcp_servers` map and the absence of a `type` field in `.mcp.json`. Current
-official Codex plugin documentation explicitly permits a wrapped
-`mcp_servers` object in `.mcp.json`; its streamable-HTTP configuration requires
-the HTTPS `url` and does not require a transport `type`. The original descriptor
-shape therefore remains intentional. Native plugin installation is still a
-separate unperformed acceptance check.
+guard and `.gitignore` rule above. The reviewer also questioned the Codex
+`.mcp.json` shape and the absence of a `type` field. The current official Codex
+MCP page documents `config.toml` with an `mcp_servers` table, but does not
+define a plugin `.mcp.json` schema. The connector and Marketplace profile now
+use the Marketplace's established `mcpServers` adapter convention and lock it
+with exact portable checks. This is not official native-plugin acceptance;
+that acceptance, including OAuth, remains an unperformed release gate.
 
 ## Endpoint and OAuth discovery observation
 
@@ -109,14 +109,15 @@ source repository did not change that application.
 ## Marketplace reconciliation
 
 `Agentic-Assets/Agentic-Assets-Marketplace` default branch was observed at
-`2728bf631e9e076e1822b9977e3f3191683110c7`. It has generic signed-tag and
-digest infrastructure, but no `corbis` policy, `corbis-mcp-v1` profile,
-root-payload promotion, staged `plugins/corbis/` snapshot, digest-bound client
-evidence, catalog admission, or attestation.
+`2728bf631e9e076e1822b9977e3f3191683110c7`. A separate open Marketplace PR
+now prepares a `corbis` policy, `corbis-mcp-v1` profile, root-payload
+promotion, and staged-payload validation. It has no merged control-plane
+profile, staged `plugins/corbis/` snapshot, digest-bound client evidence,
+catalog admission, or attestation.
 
-No Marketplace repository was edited. Marketplace work remains forbidden until
-there is a reviewed signed annotated source tag and the separate authorization
-for policy, promotion, evidence, admission, and attestation work.
+The Marketplace profile must merge before a separate promotion branch can
+verify a signed source tag against the live policy. Promotion, evidence,
+admission, and attestation remain explicit human-gated steps.
 
 ## Open gates and next evidence
 
@@ -128,12 +129,14 @@ for policy, promotion, evidence, admission, and attestation work.
 3. A decision to integrate the local producer-derived `screenMarkets`
    nested-ranking contract test with the application readiness work, followed
    by application review, merge, deployment, and live readback.
-4. Controlled reviewer authorization for native Claude Code and Codex CLI
-   installation/OAuth, plus Inspector-equivalent authentication, authorization,
-   invalid-input, and bounded-result checks. No reviewer credentials were used.
+4. Controlled reviewer authorization for native Claude Code, Codex CLI, and
+   Cursor local installation/OAuth, plus Inspector-equivalent authentication,
+   authorization, invalid-input, and bounded-result checks. No reviewer
+   credentials were used.
 5. Explicit source-review, merge, and signed annotated tag authorization.
-6. Separate Marketplace branch, policy/profile, signed-tag promotion,
-   digest-bound Claude Code and Codex CLI evidence, admission, and attestation.
+6. A merged Marketplace policy/profile, signed-tag promotion, digest-bound
+   Claude Code, Codex CLI, and Cursor local evidence, admission, and
+   attestation.
 7. Separate Anthropic, OpenAI, and Cursor directory permissions, submission,
    review, and publication. A local validator or descriptor does not establish
    any of these states.

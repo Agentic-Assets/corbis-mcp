@@ -77,11 +77,12 @@ evidence location. Redact user and credential data.
 | --- | --- | --- | --- |
 | Static package tests | Required | Re-run through staged payload validation | Server health or client acceptance |
 | Claude strict validation | Required | Required for promoted descriptor | Claude Desktop, Cowork, or directory publication |
-| Codex package validation | Required | Required for promoted descriptor | Codex desktop or public-directory publication |
-| Cursor schema/direct adapter check | Recommended if descriptor is shipped | Required for adapter validation if cataloged | Cursor Team Marketplace acceptance |
+| Codex native configuration validation | Required | Required for promoted descriptor | Codex desktop or public-directory publication |
+| Controlled direct Cursor local acceptance | Required evidence lane | Required and digest-bound | Cursor Team Marketplace acceptance |
 | MCP Inspector or protocol client | Required against the selected endpoint | Re-run when source/endpoint changes | OAuth experience in every native client |
 | Controlled direct Claude Code acceptance | Required evidence lane | Required and digest-bound | Claude Desktop, Cowork, web/mobile, or directory acceptance |
 | Controlled direct Codex CLI acceptance | Required evidence lane | Required and digest-bound | Codex desktop, ChatGPT, or directory acceptance |
+| Codex plugin `.mcp.json` shape | Portable Marketplace contract only | Re-run through staged-payload validation | Official Codex support or native-client acceptance |
 | Marketplace isolated preview | Not applicable | Required | A client refreshed or installed the root catalog entry |
 | Marketplace admission and attestation | Not applicable | Required after evidence | Public discovery or untested client support |
 

@@ -14,12 +14,12 @@ and founder authorization before acting.
   placeholder URLs, and secret/query-string rejection. Keep a live endpoint
   smoke test separate and explicit about whether it ran.
 
-- **Exercise root-payload containment in the Marketplace**
-  (confidence: verified control-plane gap; priority: high)
-  Before allowing promotion, implement and test `source_payload_root: "."`
+- **Review the root-payload promotion implementation**
+  (confidence: profile PR implementation complete; priority: high)
+  The Marketplace profile now implements and tests `source_payload_root: "."`
   using exact committed blobs, strict allowlists, symlink/traversal rejection,
-  and fixtures with unrelated source documents. Assert that `AGENTS.md`,
-  maintainer docs, and tests cannot enter `plugins/corbis/`.
+  and fixtures with unrelated source documents. Keep `AGENTS.md`, maintainer
+  docs, and tests excluded from any promoted `plugins/corbis/` payload.
 
 - **Add a source-to-payload consistency fixture**
   (confidence: required future implementation work; priority: high)
@@ -51,11 +51,11 @@ and founder authorization before acting.
 
 ## Marketplace and client acceptance
 
-- **Implement the minimal `corbis-mcp-v1` profile**
-  (confidence: founder-selected required distribution lane; priority: high)
-  Add a policy-driven profile distinct from Corbis Research. Require exact
-  digest-bound Claude Code and Codex CLI evidence, retain separate Cursor
-  adapter validation, and do not claim Cursor Team Marketplace acceptance.
+- **Review and merge the minimal `corbis-mcp-v1` profile**
+  (confidence: profile PR implementation complete; priority: high)
+  The policy-driven profile is distinct from Corbis Research and requires exact
+  digest-bound Claude Code, Codex CLI, and Cursor local evidence. It does not
+  claim Cursor Team Marketplace acceptance.
 
 - **Capture clean direct-client and Marketplace evidence separately**
   (confidence: verified launch requirement; priority: high)
@@ -66,14 +66,29 @@ and founder authorization before acting.
 
 ## Documentation and process
 
-- **Decide the public support surface**
+- **Approve the public support surface**
   (confidence: founder-gated decision; priority: medium)
-  Choose a public `SUPPORT.md` versus an approved README support section only
-  after the contact and live support route are approved. Include only the
-  chosen file in the Marketplace allowlist.
+  Approve a public `SUPPORT.md` after the contact and live support route are
+  approved. The Marketplace v1 allowlist requires this separate document.
 
 - **Refresh official schemas immediately before implementation**
   (confidence: time-sensitive requirement; priority: high)
   Use current OpenAI, Anthropic, Claude Code, Codex, Cursor, and MCP primary
   documentation and validators. Do not copy this handoff's historical examples
   as live schema authority.
+
+## Follow-up after release-material gate hardening
+
+- **Preserve ancestor-symlink rejection**
+  (confidence: implemented regression coverage; priority: high)
+  Required legal and brand paths must reject a symlink in any path component,
+  not only at the leaf. This prevents a signed source tag from validating
+  release assets that are not blobs in its tree.
+
+- **Keep semantic image validation dependency-free**
+  (confidence: implemented boundary; priority: low)
+  The source-package gate now validates PNG framing, compressed data, and
+  decoded dimensions without a runtime image dependency. If future public
+  assets require rendering-specific checks beyond this structural boundary,
+  evaluate them as a separate approved validation lane rather than expanding
+  this thin connector package opportunistically.

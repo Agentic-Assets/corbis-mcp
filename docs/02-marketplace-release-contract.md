@@ -30,19 +30,21 @@ All of these must exist before an operator tries to admit `corbis`:
 1. A reviewed source package on an approved source release, with a signed
    annotated tag and recorded tag-object and peeled-commit SHAs.
 2. Current direct-client acceptance evidence for the exact source release.
-   The initial required evidence lanes are Claude Code and Codex CLI.
+   The required evidence lanes are Claude Code, Codex CLI, and Cursor local.
 3. A Marketplace control-plane change that adds a dedicated `corbis-mcp-v1`
    remote-MCP profile. It must not reuse the Corbis Research profile.
 4. A `corbis` policy that pins the source repository, `main`, source root `.`,
    target `plugins/corbis/`, trusted signer baseline, presentation metadata,
-   source exclusions, allowlist, and evidence profile.
+   source exclusions, allowlist, and evidence profile. That control-plane
+   profile must merge before a separate promotion branch can verify a source
+   tag against the live Marketplace policy.
 5. Promotion support that reads exact committed source blobs from root `.` with
    containment, traversal, symlink, and unrelated-file tests. It must not copy
    from a mutable working tree.
 6. Policy-driven required acceptance surfaces, rather than a hard-coded global
-   map. The first profile requires `claude_code` and `codex_cli` evidence on
-   the exact payload digest. Cursor adapter validation is useful but is not
-   evidence of Cursor Team Marketplace acceptance.
+   map. The first profile requires `claude_code`, `codex_cli`, and
+   `cursor_local` evidence on the exact payload digest. Cursor local acceptance
+   is not evidence of Cursor Team Marketplace acceptance.
 
 No root Marketplace catalog entry belongs in the repository before these
 prerequisites and evidence are met.
@@ -65,7 +67,7 @@ README.md
 CHANGELOG.md
 LICENSE
 SECURITY.md
-SUPPORT.md                         # only if adopted by the public package
+SUPPORT.md
 ```
 
 If public documentation moves below a dedicated path, add only the named
@@ -101,16 +103,17 @@ exclusion list.
 2. Create and verify a signed annotated source tag. Record the remote tag
    object SHA, peeled commit SHA, signature verification, and default-branch
    reachability.
-3. On a dedicated Marketplace `chore/*` branch, promote only the allowlisted
+3. After the Marketplace control-plane profile has merged, use a separate
+   dedicated Marketplace `chore/*` branch to promote only the allowlisted
    exact blobs from that tag to a staged `plugins/corbis/` payload. Do not add
    a root catalog entry at this point.
 4. Run the Marketplace preflight and an isolated preview catalog. Produce
    immutable client evidence that names the source tag/commit and the exact
    payload digest.
-5. After the required Claude Code and Codex CLI evidence is bound to that
-   digest, run the Marketplace admission operation. It may atomically add the
-   package to the Codex, Claude, and Cursor root adapters, all pointing only to
-   `./plugins/corbis`.
+5. After the required Claude Code, Codex CLI, and Cursor local evidence is
+   bound to that digest, run the Marketplace admission operation. It may
+   atomically add the package to the Codex, Claude, and Cursor root adapters,
+   all pointing only to `./plugins/corbis`.
 6. Create and sign the Marketplace attestation that binds source provenance,
    payload digest, evidence, and runtime artifacts. Run the final release gate
    and review the Marketplace branch.

@@ -8,9 +8,9 @@ workflows, credentials, or a fixed copy of the server's tool catalog. Tool
 availability remains governed by the authenticated account and the production
 service.
 
-This branch contains the initial client descriptors and portable static checks.
-It is not a released plugin and must not be presented as a supported direct
-installation route. The intended private Marketplace package is
+The repository contains the initial client descriptors and portable static
+checks. It is not a released plugin and must not be presented as a supported
+direct installation route. The intended private Marketplace package is
 `corbis@agentic-assets`, promoted only as an immutable snapshot of a reviewed
 signed source release. Marketplace availability, direct-client acceptance,
 public visibility, and directory publication are separate milestones.
@@ -26,8 +26,8 @@ or client secret belongs in this repository or in an endpoint URL.
 
 - Claude Code uses `.claude-plugin/plugin.json` and its inline Claude-specific
   remote configuration.
-- Codex uses `.codex-plugin/plugin.json` and the Codex-specific `mcp_servers`
-  configuration in `.mcp.json`.
+- Codex uses `.codex-plugin/plugin.json` and the Marketplace-compatible
+  `mcpServers` configuration in `.mcp.json`.
 - Cursor uses `.cursor-plugin/plugin.json` and `mcp.json`.
 
 The descriptors contain no tool list, credentials, local executable, or OAuth
@@ -39,6 +39,18 @@ Run the static package contract locally with:
 ```sh
 python3 tests/validate_package.py
 ```
+
+The separate release-material gate checks regular, non-empty public license,
+security, support, and CRC-valid PNG brand assets. It intentionally fails until
+those materials exist:
+
+```sh
+python3 tests/validate_package.py --release
+```
+
+A passing release-material check does not select a license, approve public
+copy, grant a founder approval, create a release tag, or prove client
+acceptance. Those remain separate human and release gates.
 
 The separately opt-in endpoint probe is:
 
@@ -52,6 +64,7 @@ It neither authenticates nor invokes a tool.
 ## Project status
 
 No source release tag, Marketplace payload, client-acceptance record, or
-public-directory listing exists. Final public license, support, security,
-asset, and directory material remains subject to the explicit gates in the
+public-directory listing exists. The release-material gate is currently
+expected to fail because final public license, support, security, and brand
+asset material remains subject to the explicit gates in the
 [source record](docs/04-source-record.md).

@@ -5,9 +5,9 @@
 **Audience:** the coding agent and maintainer building the first Corbis MCP
 source package
 
-**Status:** the initial thin source package was implemented locally at
-`2f0cf5832645ad5fea64582aafd04b07b4d61416`. It has not been reviewed, merged,
-tagged, accepted through a native client, or released.
+**Status:** the initial thin source package merged through PR #2 at
+`ec00b9252366601acd916d0a464e8d0eb18ffaee`. It has not been tagged, accepted
+through a native client, promoted to the Marketplace, or released.
 
 **Execution goal:** for the full build, readiness, Marketplace, and publication
 contract, read
@@ -42,12 +42,17 @@ immutable Marketplace snapshot of a signed source release.
   descriptors, the two client-specific MCP configuration files, `README.md`,
   `CHANGELOG.md`, a root-package guard, and a separate unauthenticated endpoint
   metadata smoke option.
-- Its implementation-time checks and the separate application-readiness
-  observation are recorded in
+- Its implementation-time checks, the release-material gate, and the separate
+  application-readiness observation are recorded in
   [`docs/maintenance/2026-08/2026-08-13-connector-implementation-evidence.md`](maintenance/2026-08/2026-08-13-connector-implementation-evidence.md).
 - No approved public assets, final public license, public security or support
   route, source release tag, Marketplace payload, native-client acceptance, or
   public-directory listing exists.
+
+The Marketplace profile is being prepared separately. It still cannot admit
+this connector until the source has the required public release material, a
+signed source tag, and digest-bound Codex CLI, Claude Code, and Cursor local
+acceptance evidence.
 
 The checkpoint is source-package validation only. It is not a supported direct
 installation route or proof of OAuth, tool invocation, production readiness,
@@ -63,8 +68,8 @@ Build only the thin, root-level package described in
 - `.cursor-plugin/plugin.json`
 - `.mcp.json` and `mcp.json`
 - approved public assets
-- `README.md`, `CHANGELOG.md`, `LICENSE`, `SECURITY.md`, and either an approved
-  `SUPPORT.md` or an approved public support section in the README
+- `README.md`, `CHANGELOG.md`, `LICENSE`, `SECURITY.md`, and `SUPPORT.md`
+  because the Marketplace v1 allowlist requires a separate support document
 - portable manifest and endpoint smoke tests
 
 The exact file list and public text must be reviewed against current client
@@ -95,7 +100,10 @@ web routes. Do not create placeholders and call the package release-ready.
    a license, support address, final public copy, or visibility setting.
 4. Implement the minimal package on a feature branch, with machine-checkable
    contracts and no secrets.
-5. Run local validation and clean direct-install/OAuth tests. Record exact
+5. Run local validation, including `python3 tests/validate_package.py --release`,
+   and clean direct-install/OAuth tests. The release-material mode is expected
+   to fail until structural public materials exist; it does not grant founder
+   approval. Record exact
    versions, commands, environment boundaries, and outcomes.
 6. Obtain review and the separate approvals required for merge, source release,
    production deployment, and any public visibility or directory action.
