@@ -92,8 +92,6 @@ tool-schema, or support-route claim.
 The implementation agent must not silently choose or perform any of the
 following:
 
-- final public license;
-- final publisher/support contact and support channel;
 - approved public brand assets and public copy;
 - public source-repository visibility;
 - merge to `main`;
@@ -111,9 +109,9 @@ authorizations.
 
 - The source repository has descriptors, the empty allowlisted
   `provenance.json`, candidate Corbis image assets copied from the production
-  application's default branch, and a portable static test suite. The image
-  assets still require public-release approval. The repository has no final
-  public license, public security or support material, source release tag, or
+  application's default branch, a portable static test suite, and concise MIT
+  license, security, and support documents. The image assets still require
+  public-release approval. The repository has no source release tag or
   direct-client acceptance evidence.
 - Marketplace main contained the `corbis` policy and `corbis-mcp-v1` profile
   at `9af39cab5b1ff5e415c6ac50bd790aa107aa5ef0` on 2026-08-14. There is no
