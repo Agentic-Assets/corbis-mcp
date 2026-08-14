@@ -12,6 +12,8 @@ All notable changes to this source package are documented here.
 - Added the empty `provenance.json` required by the Marketplace allowlist. It
   contains no release tag, payload digest, client evidence, or attestation
   data.
+- Added concise MIT license, security-reporting, and support documents for the
+  source package.
 
 No source release tag, Marketplace artifact, direct-client acceptance record,
 or public-directory listing has been created.

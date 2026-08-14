@@ -67,6 +67,12 @@ received access to every Corbis capability.
 | `assets/` | Candidate Corbis icon and wordmark assets |
 | `tests/validate_package.py` | Static package, release-material, and opt-in endpoint checks |
 
+## Support and Security
+
+For help, contact [corbis@agenticassets.ai](mailto:corbis@agenticassets.ai).
+For private vulnerability reporting, follow [SECURITY.md](SECURITY.md). Do not
+send credentials, tokens, or client data to either route.
+
 ## Connection Status
 
 This is a source package, not a supported installation route. No source
@@ -105,11 +111,11 @@ It does not authenticate or invoke tools.
 
 ## Release Status
 
-Final public license, security, support, and asset approvals remain open human
-gates. A reviewed signed source tag, independent direct-client acceptance,
-Marketplace promotion, digest-bound evidence, admission, externally trusted
-attestation, production readback, and public publication are all separate
-steps.
+The source package now includes concise license, security, and support
+materials. Candidate public-asset approval, a reviewed signed source tag,
+independent direct-client acceptance, Marketplace promotion, digest-bound
+evidence, admission, externally trusted attestation, production readback, and
+public publication are all separate steps.
 
 See the [source record](docs/04-source-record.md),
 [security and acceptance plan](docs/03-security-and-acceptance.md), and

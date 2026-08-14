@@ -46,10 +46,10 @@ immutable Marketplace snapshot of a signed source release.
   application-readiness observation are recorded in
   [`docs/maintenance/2026-08/2026-08-13-connector-implementation-evidence.md`](maintenance/2026-08/2026-08-13-connector-implementation-evidence.md).
 - Candidate Corbis image assets are copied from the production application's
-  default branch. Their public-release approval remains a human gate. Final
-  public license, security, and support material, a source release tag,
-  Marketplace payload, native-client acceptance, and a public-directory listing
-  do not exist.
+  default branch. Their public-release approval remains a human gate. The
+  source package now contains its license, security, and support documents; a
+  source release tag, Marketplace payload, native-client acceptance, and a
+  public-directory listing do not exist.
 
 At the 2026-08-14 readback of Marketplace main
 `9af39cab5b1ff5e415c6ac50bd790aa107aa5ef0`, the dedicated `corbis` policy and
