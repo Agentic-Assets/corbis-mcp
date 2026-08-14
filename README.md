@@ -1,72 +1,127 @@
+<div align="center">
+
 # Corbis MCP
 
-Canonical source for the minimal Corbis remote-MCP connector.
+**Connect research-first Corbis to an MCP-compatible AI assistant for
+finance, real estate, and economics research.**
 
-The connector will point supported clients to the Corbis production MCP
-endpoint. It will not contain the Corbis service implementation, research
-workflows, credentials, or a fixed copy of the server's tool catalog. Tool
-availability remains governed by the authenticated account and the production
-service.
+[![Remote MCP connector](https://img.shields.io/badge/Corbis-Remote%20MCP-102A43)](https://www.corbis.ai/)
+[![Research-first AI](https://img.shields.io/badge/Research-first%20AI-Cited%20answers-167C80)](https://www.corbis.ai/)
+[![Source package status](https://img.shields.io/badge/Status-Source%20package%20only-486581)](docs/04-source-record.md)
 
-The repository contains the initial client descriptors and portable static
-checks. It is not a released plugin and must not be presented as a supported
-direct installation route. The intended private Marketplace package is
-`corbis@agentic-assets`, promoted only as an immutable snapshot of a reviewed
-signed source release. Marketplace availability, direct-client acceptance,
-public visibility, and directory publication are separate milestones.
+[corbis.ai](https://www.corbis.ai/) | [What is Corbis](#what-is-corbis) | [This connector](#what-this-connector-is) | [How it works](#how-it-works) | [Source verification](#verify-the-source-package) | [Release status](#release-status)
 
-## Intended endpoint
+[![Corbis wordmark](assets/logo.png)](https://www.corbis.ai/)
 
-`https://www.corbis.ai/api/mcp/universal`
+</div>
 
-OAuth is the intended default authentication flow. No API key, bearer token,
-or client secret belongs in this repository or in an endpoint URL.
+---
 
-## Current package boundary
+## What is Corbis
 
-- Claude Code uses `.claude-plugin/plugin.json` and its inline Claude-specific
-  remote configuration.
-- Codex uses `.codex-plugin/plugin.json` and the Marketplace-compatible
-  `mcpServers` configuration in `.mcp.json`.
-- Cursor uses `.cursor-plugin/plugin.json` and `mcp.json`.
+[Corbis](https://www.corbis.ai/) is a research-first AI platform for finance,
+real estate, and economics. It gives professionals and researchers cited
+answers with sources they can inspect before relying on them.
 
-The descriptors contain no tool list, credentials, local executable, or OAuth
-client registration. Tool availability and authorization remain service-side
-and account-dependent.
+This repository is not the Corbis application or the private Corbis Research
+Plugin. It is the small public-facing connector package that will eventually
+let approved MCP clients reach Corbis through one remote endpoint.
 
-Run the static package contract locally with:
+## What This Connector Is
+
+Corbis MCP supplies separate configuration descriptors for Claude Code, Codex,
+and Cursor. Each descriptor identifies the same remote endpoint:
+
+```text
+https://www.corbis.ai/api/mcp/universal
+```
+
+The Codex configuration keeps that endpoint under the standard `mcpServers`
+key in `.mcp.json`.
+
+OAuth is the normal authentication path. The Corbis service, not this package,
+decides which tools an authenticated account may use and enforces authorization
+for each request.
+
+The connector does not contain a local server, research workflows, tool
+catalog, API key, client secret, user data, or private application code.
+
+## How It Works
+
+1. An MCP client reads its client-specific Corbis descriptor.
+2. The client connects to the fixed HTTPS Corbis endpoint and follows the
+   service-controlled authentication path.
+3. Corbis returns only the tools and data authorized for that account.
+
+That separation matters: a valid descriptor or responsive endpoint does not
+prove that a particular client has accepted the package, completed OAuth, or
+received access to every Corbis capability.
+
+## What Is Included
+
+| Component | Purpose |
+| --- | --- |
+| `.claude-plugin/plugin.json` | Claude Code descriptor |
+| `.codex-plugin/plugin.json` and `.mcp.json` | Codex descriptor and remote MCP configuration |
+| `.cursor-plugin/plugin.json` and `mcp.json` | Cursor descriptor and remote MCP configuration |
+| `assets/` | Candidate Corbis icon and wordmark assets |
+| `tests/validate_package.py` | Static package, release-material, and opt-in endpoint checks |
+
+## Connection Status
+
+This is a source package, not a supported installation route. No source
+release tag, direct-client acceptance record, Marketplace payload or admission,
+or public-directory listing exists yet. Do not treat this repository as proof
+that any client has installed or accepted Corbis MCP.
+
+For the full Corbis research experience, visit [corbis.ai](https://www.corbis.ai/).
+The private Corbis Research Plugin is a separate product and is intentionally
+not bundled here.
+
+## Verify the Source Package
+
+Run the static contract locally:
 
 ```sh
 python3 tests/validate_package.py
 ```
 
-The separate release-material gate checks regular, non-empty public license,
-security, support, and structurally decoded PNG brand assets. It intentionally fails
-until every required public material exists:
+The release-material gate verifies regular, non-empty public license, security,
+support, and PNG brand assets. It correctly fails until every approved public
+material exists:
 
 ```sh
 python3 tests/validate_package.py --release
 ```
 
-A passing release-material check does not select a license, approve public
-copy, grant a founder approval, create a release tag, or prove client
-acceptance. Those remain separate human and release gates.
-
-The separately opt-in endpoint probe is:
+The separate endpoint probe is opt-in:
 
 ```sh
 python3 tests/validate_package.py --smoke
 ```
 
-It checks only anonymous endpoint and protected-resource metadata availability.
-It neither authenticates nor invokes a tool.
+It checks anonymous endpoint and protected-resource metadata availability only.
+It does not authenticate or invoke tools.
 
-## Project status
+## Release Status
 
-No source release tag, Marketplace payload, client-acceptance record, or
-public-directory listing exists. The release-material gate is currently
-expected to fail because final public license, support, and security material
-remain subject to the explicit gates in the
-[source record](docs/04-source-record.md). `provenance.json` is an allowlisted
-empty source file. It asserts no release tag, payload digest, client evidence,
-or attestation.
+Final public license, security, support, and asset approvals remain open human
+gates. A reviewed signed source tag, independent direct-client acceptance,
+Marketplace promotion, digest-bound evidence, admission, externally trusted
+attestation, production readback, and public publication are all separate
+steps.
+
+See the [source record](docs/04-source-record.md),
+[security and acceptance plan](docs/03-security-and-acceptance.md), and
+[Marketplace release contract](docs/02-marketplace-release-contract.md) for
+the exact boundaries.
+
+---
+
+<div align="center">
+
+**Built by [Corbis](https://www.corbis.ai/) from [Agentic Assets](https://www.agenticassets.ai/)**
+
+[corbis.ai](https://www.corbis.ai/) | [Source record](docs/04-source-record.md) | [Security and acceptance](docs/03-security-and-acceptance.md) | [Marketplace contract](docs/02-marketplace-release-contract.md)
+
+</div>
