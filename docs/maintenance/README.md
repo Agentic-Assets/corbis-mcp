@@ -18,4 +18,5 @@ part of the public connector package or its future Marketplace payload.
 ## Current archive
 
 - [`2026-08/`](2026-08/) contains the first Corbis MCP source-handoff closeout
-  and its forward queue.
+  and its forward queue, plus the source-release-readiness closeout and forward
+  queue.
