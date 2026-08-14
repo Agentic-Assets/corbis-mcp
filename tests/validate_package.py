@@ -72,6 +72,7 @@ RELEASE_REQUIRED_RELATIVE_PATHS = (
 )
 PNG_SIGNATURE = b"\x89PNG\r\n\x1a\n"
 MAX_PUBLIC_PNG_BYTES = 5 * 1024 * 1024
+MAX_PUBLIC_PNG_DECODED_BYTES = 64 * 1024 * 1024
 ALLOWED_TOP_LEVEL_ENTRIES = {
     ".agents",
     ".claude-plugin",
@@ -235,6 +236,8 @@ def validate_release_png(asset: Path, relative: Path) -> None:
     first_chunk = True
     saw_idat = False
     saw_iend = False
+    idat_chunks: list[bytes] = []
+    after_idat = False
     while position < len(content):
         if position + 12 > len(content):
             raise RuntimeError(message)
@@ -254,14 +257,48 @@ def validate_release_png(asset: Path, relative: Path) -> None:
                 raise RuntimeError(message)
             first_chunk = False
         elif chunk_type == b"IDAT":
+            if after_idat:
+                raise RuntimeError(message)
             saw_idat = True
+            idat_chunks.append(chunk_data)
         elif chunk_type == b"IEND":
             if length != 0 or chunk_end != len(content):
                 raise RuntimeError(message)
             saw_iend = True
             break
+        else:
+            if saw_idat:
+                after_idat = True
+            if not all(65 <= byte <= 90 or 97 <= byte <= 122 for byte in chunk_type):
+                raise RuntimeError(message)
+            if chunk_type[0] & 0x20 == 0:
+                raise RuntimeError(message)
         position = chunk_end
     if first_chunk or not saw_idat or not saw_iend:
+        raise RuntimeError(message)
+
+    try:
+        decompressor = zlib.decompressobj()
+        decoded_size = 0
+        for chunk_data in idat_chunks:
+            remaining = chunk_data
+            while remaining:
+                decoded = decompressor.decompress(remaining, 64 * 1024)
+                decoded_size += len(decoded)
+                if decoded_size > MAX_PUBLIC_PNG_DECODED_BYTES:
+                    raise RuntimeError(message)
+                next_remaining = decompressor.unconsumed_tail
+                if next_remaining == remaining and not decoded:
+                    raise RuntimeError(message)
+                remaining = next_remaining
+        decoded_size += len(decompressor.flush(64 * 1024))
+    except zlib.error as exc:
+        raise RuntimeError(message) from exc
+    if (
+        decoded_size > MAX_PUBLIC_PNG_DECODED_BYTES
+        or not decompressor.eof
+        or decompressor.unused_data
+    ):
         raise RuntimeError(message)
 
 
@@ -348,6 +385,44 @@ class PackageContractTests(unittest.TestCase):
 
             icon_path = root / "assets/icon.png"
             icon_path.write_bytes(b"not a PNG")
+            with self.assertRaisesRegex(RuntimeError, "invalid PNG asset: assets/icon.png"):
+                validate_release_material(root)
+            icon_path.write_bytes(valid_png)
+
+            def png_chunk(chunk_type: bytes, chunk_data: bytes) -> bytes:
+                return (
+                    len(chunk_data).to_bytes(4, "big")
+                    + chunk_type
+                    + chunk_data
+                    + (zlib.crc32(chunk_type + chunk_data) & 0xFFFFFFFF).to_bytes(4, "big")
+                )
+
+            png_header = PNG_SIGNATURE + png_chunk(
+                b"IHDR", bytes.fromhex("00000001000000010800000000")
+            )
+            valid_idat = bytes.fromhex("789c63f80f0001010100")
+            split_idat_png = (
+                png_header
+                + png_chunk(b"IDAT", valid_idat[:5])
+                + png_chunk(b"IDAT", valid_idat[5:])
+                + png_chunk(b"IEND", b"")
+            )
+            icon_path.write_bytes(split_idat_png)
+            validate_release_material(root)
+
+            corrupt_png = (
+                png_header
+                + png_chunk(b"IDAT", b"not-a-zlib-stream")
+                + png_chunk(b"IEND", b"")
+            )
+            icon_path.write_bytes(corrupt_png)
+            with self.assertRaisesRegex(RuntimeError, "invalid PNG asset: assets/icon.png"):
+                validate_release_material(root)
+
+            trailing_data_png = (
+                png_header + png_chunk(b"IDAT", valid_idat + b"\x00") + png_chunk(b"IEND", b"")
+            )
+            icon_path.write_bytes(trailing_data_png)
             with self.assertRaisesRegex(RuntimeError, "invalid PNG asset: assets/icon.png"):
                 validate_release_material(root)
             icon_path.write_bytes(valid_png)
