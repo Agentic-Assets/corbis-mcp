@@ -12,6 +12,7 @@ submission, deployment, or Marketplace action.
 | --- | --- | --- |
 | Canonical editable source | Decided | `Agentic-Assets/corbis-mcp` |
 | Package ID | Decided | `corbis` |
+| MCP server identifier | Decided | `corbis-mcp`, distinct from the package ID and the Corbis Research server identifier `corbis` |
 | Display name | Decided | `Corbis` |
 | Publisher | Decided | `Agentic Assets` |
 | Remote endpoint | Decided | `https://www.corbis.ai/api/mcp/universal` |
@@ -34,10 +35,13 @@ guard, and portable static and opt-in metadata-smoke checks.
 Its implementation-time validation and the exact boundaries of the companion
 application test are recorded in
 [`docs/maintenance/2026-08/2026-08-13-connector-implementation-evidence.md`](maintenance/2026-08/2026-08-13-connector-implementation-evidence.md).
-The merged source is not a signed source release and proves neither native-
-client acceptance nor a public installation route. Re-read the remote default
-branch, current visibility, branches, pull requests, and signed tags before
-any release action.
+That historical source has since been superseded by the signed `v0.1.0` tag on
+`ef1c48a715ef8e8a45971e257331aab9d2004d01`. Its Codex installation resolved
+to the separately installed Corbis Research server because both descriptors
+used the `corbis` MCP server identifier; it is not valid thin-connector Codex
+acceptance. The `0.1.1` candidate changes only the thin connector server
+identifier to `corbis-mcp`. Re-read the remote default branch, current
+visibility, branches, pull requests, and signed tags before any release action.
 
 ## Upstream planning sources transferred into this handoff
 
@@ -111,8 +115,9 @@ authorizations.
   `provenance.json`, candidate Corbis image assets copied from the production
   application's default branch, a portable static test suite, and concise MIT
   license, security, and support documents. The image assets still require
-  public-release approval. The repository has no source release tag or
-  direct-client acceptance evidence.
+  public-release approval. `v0.1.0` is a signed historical source tag, but it
+  has no valid thin-connector direct-client acceptance evidence because of the
+  MCP server-name collision. `0.1.1` remains an untagged candidate.
 - Marketplace main contained the `corbis` policy and `corbis-mcp-v1` profile
   at `9af39cab5b1ff5e415c6ac50bd790aa107aa5ef0` on 2026-08-14. There is no
   promoted payload, catalog entry, digest-bound evidence, or signed

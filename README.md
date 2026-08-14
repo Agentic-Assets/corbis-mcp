@@ -36,8 +36,10 @@ and Cursor. Each descriptor identifies the same remote endpoint:
 https://www.corbis.ai/api/mcp/universal
 ```
 
-The Codex configuration keeps that endpoint under the standard `mcpServers`
-key in `.mcp.json`.
+Every descriptor uses the stable `corbis-mcp` server identifier under its
+`mcpServers` key. It is intentionally distinct from the package name
+`corbis` and the future Marketplace selector `corbis@agentic-assets`, so it
+does not collide with the separate Corbis Research MCP configuration.
 
 OAuth is the normal authentication path. The Corbis service, not this package,
 decides which tools an authenticated account may use and enforces authorization
@@ -75,10 +77,13 @@ send credentials, tokens, or client data to either route.
 
 ## Connection Status
 
-This is a source package, not a supported installation route. No source
-release tag, direct-client acceptance record, Marketplace payload or admission,
-or public-directory listing exists yet. Do not treat this repository as proof
-that any client has installed or accepted Corbis MCP.
+The signed `v0.1.0` source tag remains a historical snapshot, but its Codex
+install resolved to the separate Corbis Research configuration because both
+used the `corbis` server identifier. This `0.1.1` source candidate changes the
+thin connector to `corbis-mcp`; it has not yet been tagged or accepted by any
+client. No Marketplace admission or public-directory listing exists. Do not
+treat this repository as proof that any client has installed or accepted
+Corbis MCP.
 
 For the full Corbis research experience, visit [corbis.ai](https://www.corbis.ai/).
 The private Corbis Research Plugin is a separate product and is intentionally
