@@ -73,6 +73,29 @@ RELEASE_REQUIRED_RELATIVE_PATHS = (
 PNG_SIGNATURE = b"\x89PNG\r\n\x1a\n"
 MAX_PUBLIC_PNG_BYTES = 5 * 1024 * 1024
 MAX_PUBLIC_PNG_DECODED_BYTES = 64 * 1024 * 1024
+PNG_CHANNELS = {
+    0: 1,
+    2: 3,
+    3: 1,
+    4: 2,
+    6: 4,
+}
+PNG_BIT_DEPTHS = {
+    0: {1, 2, 4, 8, 16},
+    2: {8, 16},
+    3: {1, 2, 4, 8},
+    4: {8, 16},
+    6: {8, 16},
+}
+ADAM7_PASSES = (
+    (0, 0, 8, 8),
+    (4, 0, 8, 8),
+    (0, 4, 4, 8),
+    (2, 0, 4, 4),
+    (0, 2, 2, 4),
+    (1, 0, 2, 2),
+    (0, 1, 1, 2),
+)
 ALLOWED_TOP_LEVEL_ENTRIES = {
     ".agents",
     ".claude-plugin",
@@ -223,6 +246,30 @@ def missing_release_material(root: Path = REPOSITORY_ROOT) -> list[str]:
     ]
 
 
+def expected_png_decoded_size(
+    width: int,
+    height: int,
+    bit_depth: int,
+    color_type: int,
+    interlace_method: int,
+) -> int:
+    channels = PNG_CHANNELS[color_type]
+
+    def scanline_size(pixel_width: int) -> int:
+        return 1 + (pixel_width * channels * bit_depth + 7) // 8
+
+    if interlace_method == 0:
+        return height * scanline_size(width)
+
+    total_size = 0
+    for start_x, start_y, step_x, step_y in ADAM7_PASSES:
+        pass_width = max(0, (width - start_x + step_x - 1) // step_x)
+        pass_height = max(0, (height - start_y + step_y - 1) // step_y)
+        if pass_width and pass_height:
+            total_size += pass_height * scanline_size(pass_width)
+    return total_size
+
+
 def validate_release_png(asset: Path, relative: Path) -> None:
     message = f"Release material has an invalid PNG asset: {relative}"
     asset_size = asset.stat().st_size
@@ -238,6 +285,7 @@ def validate_release_png(asset: Path, relative: Path) -> None:
     saw_iend = False
     idat_chunks: list[bytes] = []
     after_idat = False
+    expected_decoded_size: int | None = None
     while position < len(content):
         if position + 12 > len(content):
             raise RuntimeError(message)
@@ -253,7 +301,27 @@ def validate_release_png(asset: Path, relative: Path) -> None:
         if first_chunk:
             width = int.from_bytes(chunk_data[:4], "big")
             height = int.from_bytes(chunk_data[4:8], "big")
-            if chunk_type != b"IHDR" or length != 13 or width <= 0 or height <= 0:
+            bit_depth = chunk_data[8]
+            color_type = chunk_data[9]
+            compression_method = chunk_data[10]
+            filter_method = chunk_data[11]
+            interlace_method = chunk_data[12]
+            if (
+                chunk_type != b"IHDR"
+                or length != 13
+                or width <= 0
+                or height <= 0
+                or color_type not in PNG_CHANNELS
+                or bit_depth not in PNG_BIT_DEPTHS[color_type]
+                or compression_method != 0
+                or filter_method != 0
+                or interlace_method not in {0, 1}
+            ):
+                raise RuntimeError(message)
+            expected_decoded_size = expected_png_decoded_size(
+                width, height, bit_depth, color_type, interlace_method
+            )
+            if expected_decoded_size > MAX_PUBLIC_PNG_DECODED_BYTES:
                 raise RuntimeError(message)
             first_chunk = False
         elif chunk_type == b"IDAT":
@@ -274,7 +342,7 @@ def validate_release_png(asset: Path, relative: Path) -> None:
             if chunk_type[0] & 0x20 == 0:
                 raise RuntimeError(message)
         position = chunk_end
-    if first_chunk or not saw_idat or not saw_iend:
+    if first_chunk or not saw_idat or not saw_iend or expected_decoded_size is None:
         raise RuntimeError(message)
 
     try:
@@ -296,6 +364,7 @@ def validate_release_png(asset: Path, relative: Path) -> None:
         raise RuntimeError(message) from exc
     if (
         decoded_size > MAX_PUBLIC_PNG_DECODED_BYTES
+        or decoded_size != expected_decoded_size
         or not decompressor.eof
         or decompressor.unused_data
     ):
@@ -423,6 +492,18 @@ class PackageContractTests(unittest.TestCase):
                 png_header + png_chunk(b"IDAT", valid_idat + b"\x00") + png_chunk(b"IEND", b"")
             )
             icon_path.write_bytes(trailing_data_png)
+            with self.assertRaisesRegex(RuntimeError, "invalid PNG asset: assets/icon.png"):
+                validate_release_material(root)
+
+            rgba_png_header = PNG_SIGNATURE + png_chunk(
+                b"IHDR", bytes.fromhex("00000001000000010806000000")
+            )
+            short_scanline_png = (
+                rgba_png_header
+                + png_chunk(b"IDAT", zlib.compress(b"\x00"))
+                + png_chunk(b"IEND", b"")
+            )
+            icon_path.write_bytes(short_scanline_png)
             with self.assertRaisesRegex(RuntimeError, "invalid PNG asset: assets/icon.png"):
                 validate_release_material(root)
             icon_path.write_bytes(valid_png)
