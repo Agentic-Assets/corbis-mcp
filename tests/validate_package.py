@@ -375,7 +375,14 @@ def validate_release_png(asset: Path, relative: Path) -> None:
                 raise RuntimeError(message)
             first_chunk = False
         elif chunk_type == b"PLTE":
-            if saw_idat or saw_plte or color_type not in {2, 3, 6} or not 3 <= length <= 768 or length % 3:
+            if (
+                saw_idat
+                or saw_plte
+                or color_type not in {2, 3, 6}
+                or not 3 <= length <= 768
+                or length % 3
+                or (color_type == 3 and length // 3 > 2**bit_depth)
+            ):
                 raise RuntimeError(message)
             saw_plte = True
         elif chunk_type == b"IDAT":
@@ -593,6 +600,17 @@ class PackageContractTests(unittest.TestCase):
                 + png_chunk(b"IEND", b"")
             )
             icon_path.write_bytes(indexed_without_palette_png)
+            with self.assertRaisesRegex(RuntimeError, "invalid PNG asset: assets/icon.png"):
+                validate_release_material(root)
+
+            indexed_oversized_palette_png = (
+                PNG_SIGNATURE
+                + png_chunk(b"IHDR", bytes.fromhex("00000001000000010103000000"))
+                + png_chunk(b"PLTE", bytes.fromhex("000000ffffff808080"))
+                + png_chunk(b"IDAT", zlib.compress(b"\x00\x00"))
+                + png_chunk(b"IEND", b"")
+            )
+            icon_path.write_bytes(indexed_oversized_palette_png)
             with self.assertRaisesRegex(RuntimeError, "invalid PNG asset: assets/icon.png"):
                 validate_release_material(root)
             icon_path.write_bytes(valid_png)

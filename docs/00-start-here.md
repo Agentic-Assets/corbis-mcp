@@ -91,8 +91,9 @@ web routes. Do not create placeholders and call the package release-ready.
 - Credentials, reviewer accounts, source code from the private application,
   user data, client caches, or a custom browser UI.
 - Marketplace catalog entries, Marketplace evidence, Marketplace attestations,
-  or an automatic sync. The source-required `provenance.json` is release
-  metadata, not a Marketplace catalog, evidence record, or attestation.
+  or an automatic sync. The source-required `provenance.json` is an empty
+  required source file, not a Marketplace catalog, evidence record, or
+  attestation.
 
 ## Required sequence
 
