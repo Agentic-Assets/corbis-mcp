@@ -79,6 +79,12 @@ and founder authorization before acting.
 
 ## Follow-up after release-material gate hardening
 
+- **Preserve ancestor-symlink rejection**
+  (confidence: implemented regression coverage; priority: high)
+  Required legal and brand paths must reject a symlink in any path component,
+  not only at the leaf. This prevents a signed source tag from validating
+  release assets that are not blobs in its tree.
+
 - **Keep semantic image validation dependency-free**
   (confidence: implemented boundary; priority: low)
   The source-package gate now validates PNG framing, compressed data, and

@@ -10,6 +10,8 @@
   release assets.
 - `24668242f8fef56bcfbfcd67bf75cd087a600a09` — verify PNG decoded scanline
   size.
+- `5f5abe6254b02b2dbbc88337fd5bdb55e7202bad` — reject symlinked release
+  asset directories.
 
 ## Goal
 
@@ -25,6 +27,9 @@ solely because its chunks and CRCs are valid.
   count to match the IHDR dimensions for both non-interlaced and Adam7 images.
 - Regression coverage includes split IDAT streams, corrupt and trailing zlib
   data, and a 1×1 RGBA image with too-short decompressed scanlines.
+- Every component of each required release-material path must now be a real
+  in-tree path, so a symlinked `assets/` directory cannot make external files
+  appear to be signed release assets.
 
 ## Verification
 
@@ -39,6 +44,10 @@ solely because its chunks and CRCs are valid.
   `dbd1832a-baf8-4f26-930d-7c1a4e4c296b`.
 - An independent adversarial review identified the short-scanline gap; the
   second implementation commit and regression test resolve it.
+- The final open PR review thread concerning a symlinked `assets/` directory
+  was addressed by `5f5abe6254b02b2dbbc88337fd5bdb55e7202bad`; static
+  validation still passes. The existing `--release` invocation continues to
+  fail as expected while founder-gated public material is absent.
 
 ## Decision record
 
@@ -49,5 +58,4 @@ publication claim.
 ## Left to the operator
 
 Final public material, source release, and all direct-client acceptance remain
-separate human-gated work. The branch is pending its final documentation commit
-and push; merge requires the explicit Cayman approval phrase.
+separate human-gated work. Merge requires the explicit Cayman approval phrase.
