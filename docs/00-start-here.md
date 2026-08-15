@@ -5,9 +5,14 @@
 **Audience:** the coding agent and maintainer building the first Corbis MCP
 source package
 
-**Status:** the initial thin source package merged through PR #2 at
-`ec00b9252366601acd916d0a464e8d0eb18ffaee`. It has not been tagged, accepted
-through a native client, promoted to the Marketplace, or released.
+**Status update (2026-08-14):** the initial thin source package merged through
+PR #2 at `ec00b9252366601acd916d0a464e8d0eb18ffaee`. The later
+server-identifier correction merged through PR #6 at
+`3fb5b4659ed971f409c0d70135d654f21da4db08` and was published as signed
+annotated tag `v0.1.1` (tag object
+`ff16d89bf37f291cd643711233ed255f934dc446`). The signed source tag does not
+prove native-client acceptance, Marketplace promotion or admission, or public
+release.
 
 **Execution goal:** for the full build, readiness, Marketplace, and publication
 contract, read
@@ -46,17 +51,19 @@ immutable Marketplace snapshot of a signed source release.
   application-readiness observation are recorded in
   [`docs/maintenance/2026-08/2026-08-13-connector-implementation-evidence.md`](maintenance/2026-08/2026-08-13-connector-implementation-evidence.md).
 - Candidate Corbis image assets are copied from the production application's
-  default branch. Their public-release approval remains a human gate. The
-  source package now contains its license, security, and support documents; a
-  source release tag, Marketplace payload, native-client acceptance, and a
-  public-directory listing do not exist.
+  default branch. They were included in the signed `v0.1.1` source snapshot;
+  that source snapshot does not authorize public repository visibility or
+  directory publication. The source package also contains its license,
+  security, and support documents. Native-client acceptance, Marketplace
+  admission, and a public-directory listing remain separate gates.
 
-At the 2026-08-14 readback of Marketplace main
+At the historical 2026-08-14 readback of Marketplace main
 `9af39cab5b1ff5e415c6ac50bd790aa107aa5ef0`, the dedicated `corbis` policy and
-`corbis-mcp-v1` runtime profile already existed. The Marketplace still cannot
-admit this connector until the source has every required release file, a signed
-source tag, and digest-bound Claude Code, Codex CLI, and Cursor local acceptance
-evidence. Revalidate the live policy and allowlist immediately before promotion.
+`corbis-mcp-v1` runtime profile already existed. The signed `v0.1.1` source
+tag now satisfies only the immutable-source prerequisite. The Marketplace
+still requires current policy/allowlist validation and digest-bound Claude
+Code, Codex CLI, and Cursor local acceptance evidence before admission.
+Revalidate the live control plane immediately before promotion.
 
 The checkpoint is source-package validation only. It is not a supported direct
 installation route or proof of OAuth, tool invocation, production readiness,
@@ -108,9 +115,8 @@ web routes. Do not create placeholders and call the package release-ready.
 4. Implement the minimal package on a feature branch, with machine-checkable
    contracts and no secrets.
 5. Run local validation, including `python3 tests/validate_package.py --release`,
-   and clean direct-install/OAuth tests. The release-material mode is expected
-   to fail until structural public materials exist; it does not grant founder
-   approval. Record exact
+   and clean direct-install/OAuth tests. A passing release-material mode proves
+   only structural completeness; it does not grant founder approval. Record exact
    versions, commands, environment boundaries, and outcomes.
 6. Obtain review and the separate approvals required for merge, source release,
    production deployment, and any public visibility or directory action.

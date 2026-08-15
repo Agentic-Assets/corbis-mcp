@@ -33,7 +33,10 @@ historical observations, not authorization or a substitute for immediate live
 revalidation before a promotion.
 
 1. A reviewed source package on an approved source release, with a signed
-   annotated tag and recorded tag-object and peeled-commit SHAs.
+   annotated tag and recorded tag-object and peeled-commit SHAs. For the
+   `v0.1.1` source release, the remote tag object is
+   `ff16d89bf37f291cd643711233ed255f934dc446` and its peeled commit is
+   `3fb5b4659ed971f409c0d70135d654f21da4db08` on `main`.
 2. Current direct-client acceptance evidence for the exact source release.
    The required evidence lanes are Claude Code, Codex CLI, and Cursor local.
 3. Marketplace main already has a dedicated `corbis-mcp-v1` remote-MCP profile
