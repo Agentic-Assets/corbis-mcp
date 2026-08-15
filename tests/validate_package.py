@@ -34,6 +34,7 @@ REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
 ENDPOINT = "https://www.corbis.ai/api/mcp/universal"
 REPOSITORY_URL = "https://github.com/Agentic-Assets/corbis-mcp"
 PACKAGE_ID = "corbis"
+MCP_SERVER_ID = "corbis-mcp"
 DISPLAY_NAME = "Corbis"
 PUBLISHER = "Agentic Assets"
 MANIFEST_FILES = {
@@ -705,25 +706,31 @@ class PackageContractTests(unittest.TestCase):
 
         self.assertEqual(set(codex_mcp), {"mcpServers"})
         self.assertEqual(set(cursor_mcp), {"mcpServers"})
-        self.assertEqual(codex_mcp["mcpServers"], {PACKAGE_ID: {"url": ENDPOINT}})
-        self.assertEqual(cursor_mcp["mcpServers"], {PACKAGE_ID: {"url": ENDPOINT}})
+        self.assertNotEqual(
+            MCP_SERVER_ID,
+            PACKAGE_ID,
+            "The remote MCP server identifier must remain distinct from the package identifier",
+        )
+        self.assertEqual(codex_mcp["mcpServers"], {MCP_SERVER_ID: {"url": ENDPOINT}})
+        self.assertEqual(cursor_mcp["mcpServers"], {MCP_SERVER_ID: {"url": ENDPOINT}})
 
         claude_manifest = load_json(MANIFEST_FILES["claude"])
         claude_mcp = claude_manifest.get("mcpServers")
         self.assertIsInstance(claude_mcp, dict)
         assert isinstance(claude_mcp, dict)
         self.assertEqual(
-            claude_mcp[PACKAGE_ID]["url"], ENDPOINT,
+            claude_mcp[MCP_SERVER_ID]["url"], ENDPOINT,
             "The Claude remote MCP configuration must use the exact endpoint",
         )
         self.assertEqual(
-            claude_mcp[PACKAGE_ID]["type"], "http",
+            claude_mcp[MCP_SERVER_ID]["type"], "http",
             "Claude must use the HTTP transport for the remote endpoint",
         )
 
     def test_readme_matches_the_checked_in_codex_mcp_shape(self) -> None:
         readme = (REPOSITORY_ROOT / "README.md").read_text(encoding="utf-8")
         self.assertIn("`mcpServers`", readme)
+        self.assertIn(f"`{MCP_SERVER_ID}`", readme)
         self.assertNotIn("`mcp_servers`", readme)
 
     def test_no_placeholders_credentials_or_unsafe_urls_appear_in_config(self) -> None:

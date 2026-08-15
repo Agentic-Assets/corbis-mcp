@@ -69,13 +69,17 @@ Every descriptor must use the same:
 - license identifier matching the approved `LICENSE` file; and
 - factual, entitlement-aware descriptions.
 
+The package ID is not the MCP server identifier. The thin connector uses the
+stable MCP server identifier `corbis-mcp` so it does not collide with the
+separate Corbis Research configuration named `corbis`.
+
 Do not claim client support that has not been tested. Do not leave temporary
 URLs, generated timestamps, boilerplate about a local runtime, or a generic
 research-toolkit inventory in the final descriptors.
 
 ### MCP configuration
 
-Both `.mcp.json` and `mcp.json` must configure the named server `corbis` as
+Both `.mcp.json` and `mcp.json` must configure the named server `corbis-mcp` as
 HTTP at:
 
 ```text
@@ -123,7 +127,7 @@ The initial PR must add portable tests that, at a minimum:
 
 1. Parse every descriptor as its declared data format.
 2. Assert shared metadata consistency and release-version consistency.
-3. Assert both MCP descriptors name `corbis`, use HTTPS, and exactly use the
+3. Assert both MCP descriptors name `corbis-mcp`, use HTTPS, and exactly use the
    approved endpoint without an embedded credential or query string.
 4. Reject placeholder URLs, private repository URLs, local paths, and
    unapproved component references.

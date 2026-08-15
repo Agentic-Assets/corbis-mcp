@@ -20,4 +20,5 @@ part of the public connector package or its future Marketplace payload.
 - [`2026-08/`](2026-08/) contains the first Corbis MCP source-handoff closeout
   and its forward queue, plus the source-release-readiness closeout and forward
   queue, README hero-image blocker, and research-focused README closeout and
-  forward queue, plus the public release-materials closeout and forward queue.
+  forward queue, plus the public release-materials closeout and forward queue,
+  and the MCP server-identifier closeout and forward queue.
