@@ -124,8 +124,9 @@ authorizations.
   source tag, but it has no valid thin-connector direct-client acceptance
   evidence because of the MCP server-name collision. The signed `v0.1.1` tag
   fixes that descriptor collision, but it also has no recorded direct-client
-  acceptance evidence. The untagged `0.1.2` documentation candidate must be
-  reviewed and tagged independently before promotion.
+  acceptance evidence. The `0.1.2` source release record is dated 2026-08-14
+  and records the current descriptor version, but it does not assert a signed
+  `v0.1.2` tag or authorize promotion.
 - Marketplace main contained the `corbis` policy and `corbis-mcp-v1` profile
   at `9af39cab5b1ff5e415c6ac50bd790aa107aa5ef0` on 2026-08-14. There is no
   promoted payload, catalog entry, digest-bound evidence, or signed
@@ -140,8 +141,8 @@ authorizations.
 
 ### High priority: source package and production proof
 
-- Review the `0.1.2` documentation candidate and obtain explicit authorization
-  before creating any future signed source tag.
+- Obtain explicit authorization before creating any future signed source tag
+  for the `0.1.2` source record.
 - Decide whether to integrate local application test commit `c85d1e16b` with
   the readiness candidate, then complete its independent review, merge,
   deployment, and live readback before running a redacted authenticated
