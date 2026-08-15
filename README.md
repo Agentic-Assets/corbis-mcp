@@ -84,8 +84,9 @@ collision by using `corbis-mcp`; its tag object
 `ff16d89bf37f291cd643711233ed255f934dc446` points to source commit
 `3fb5b4659ed971f409c0d70135d654f21da4db08` on `main`.
 
-This working tree is the untagged `0.1.2` documentation candidate. Neither
-the `v0.1.1` tag nor this candidate proves that any native client accepted the
+The `0.1.2` source release record is dated 2026-08-14. It records the current
+descriptor version but does not assert a signed `v0.1.2` tag. Neither the
+`v0.1.1` tag nor the `0.1.2` record proves that any native client accepted the
 connector. No Marketplace admission or public-directory listing is claimed.
 
 For the full Corbis research experience, visit [corbis.ai](https://www.corbis.ai/).
@@ -123,8 +124,8 @@ The source package includes concise license, security, and support materials,
 and `v0.1.1` is a signed source tag. Independent direct-client acceptance,
 Marketplace promotion, digest-bound evidence, admission, externally trusted
 attestation, production readback, and public publication remain separate
-steps. The current `0.1.2` candidate requires its own review and signed tag
-before it can be promoted.
+steps. The `0.1.2` source record requires a signed source tag before it can be
+considered for promotion.
 
 See the [source record](docs/04-source-record.md),
 [security and acceptance plan](docs/03-security-and-acceptance.md), and

@@ -2,15 +2,15 @@
 
 All notable changes to this source package are documented here.
 
-## 0.1.2 - Unreleased
+## 0.1.2 - 2026-08-14
 
 - Corrected the source-package release record after the signed `v0.1.1` tag.
-- Bumped all client descriptors to the next patch-release candidate version,
-  `0.1.2`, so the working tree cannot be mistaken for the immutable `v0.1.1`
-  snapshot.
+- Bumped all client descriptors to patch-release version `0.1.2` so they are
+  distinguishable from the immutable `v0.1.1` snapshot.
 
-This is an untagged source candidate. It has no direct-client acceptance,
-Marketplace artifact or admission, or public-directory listing.
+This source release record does not assert a signed `v0.1.2` tag. It does not
+establish direct-client acceptance, a Marketplace artifact or admission, or a
+public-directory listing.
 
 ## 0.1.1 - 2026-08-14
 
