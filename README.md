@@ -79,11 +79,14 @@ send credentials, tokens, or client data to either route.
 
 The signed `v0.1.0` source tag remains a historical snapshot, but its Codex
 install resolved to the separate Corbis Research configuration because both
-used the `corbis` server identifier. This `0.1.1` source candidate changes the
-thin connector to `corbis-mcp`; it has not yet been tagged or accepted by any
-client. No Marketplace admission or public-directory listing exists. Do not
-treat this repository as proof that any client has installed or accepted
-Corbis MCP.
+used the `corbis` server identifier. The signed `v0.1.1` tag corrects that
+collision by using `corbis-mcp`; its tag object
+`ff16d89bf37f291cd643711233ed255f934dc446` points to source commit
+`3fb5b4659ed971f409c0d70135d654f21da4db08` on `main`.
+
+This working tree is the untagged `0.1.2` documentation candidate. Neither
+the `v0.1.1` tag nor this candidate proves that any native client accepted the
+connector. No Marketplace admission or public-directory listing is claimed.
 
 For the full Corbis research experience, visit [corbis.ai](https://www.corbis.ai/).
 The private Corbis Research Plugin is a separate product and is intentionally
@@ -116,11 +119,12 @@ It does not authenticate or invoke tools.
 
 ## Release Status
 
-The source package now includes concise license, security, and support
-materials. Candidate public-asset approval, a reviewed signed source tag,
-independent direct-client acceptance, Marketplace promotion, digest-bound
-evidence, admission, externally trusted attestation, production readback, and
-public publication are all separate steps.
+The source package includes concise license, security, and support materials,
+and `v0.1.1` is a signed source tag. Independent direct-client acceptance,
+Marketplace promotion, digest-bound evidence, admission, externally trusted
+attestation, production readback, and public publication remain separate
+steps. The current `0.1.2` candidate requires its own review and signed tag
+before it can be promoted.
 
 See the [source record](docs/04-source-record.md),
 [security and acceptance plan](docs/03-security-and-acceptance.md), and

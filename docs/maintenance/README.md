@@ -21,4 +21,5 @@ part of the public connector package or its future Marketplace payload.
   and its forward queue, plus the source-release-readiness closeout and forward
   queue, README hero-image blocker, and research-focused README closeout and
   forward queue, plus the public release-materials closeout and forward queue,
-  and the MCP server-identifier closeout and forward queue.
+  the MCP server-identifier closeout and forward queue, plus the v0.1.1
+  release-record correction closeout and forward queue.

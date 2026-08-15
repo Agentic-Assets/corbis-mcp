@@ -1,6 +1,6 @@
 # Corbis MCP decision and source record
 
-**Record date:** 2026-08-13
+**Record date:** 2026-08-14
 
 This is the durable handoff record for the first source-package implementation.
 It is not a release record and must be revalidated before any visibility,
@@ -35,13 +35,19 @@ guard, and portable static and opt-in metadata-smoke checks.
 Its implementation-time validation and the exact boundaries of the companion
 application test are recorded in
 [`docs/maintenance/2026-08/2026-08-13-connector-implementation-evidence.md`](maintenance/2026-08/2026-08-13-connector-implementation-evidence.md).
-That historical source has since been superseded by the signed `v0.1.0` tag on
+That historical source was superseded by signed `v0.1.0` on
 `ef1c48a715ef8e8a45971e257331aab9d2004d01`. Its Codex installation resolved
 to the separately installed Corbis Research server because both descriptors
 used the `corbis` MCP server identifier; it is not valid thin-connector Codex
-acceptance. The `0.1.1` candidate changes only the thin connector server
-identifier to `corbis-mcp`. Re-read the remote default branch, current
-visibility, branches, pull requests, and signed tags before any release action.
+acceptance. The functional correction in the later `v0.1.1` signed annotated
+tag is the thin connector server identifier `corbis-mcp`; the release also
+updates its matching descriptors, validation, and release records. Its remote
+tag object is
+`ff16d89bf37f291cd643711233ed255f934dc446`; it peels to
+`3fb5b4659ed971f409c0d70135d654f21da4db08`, which is reachable from `main`.
+Neither source tag is direct-client acceptance. Re-read the remote default
+branch, current visibility, branches, pull requests, and signed tags before
+any further release action.
 
 ## Upstream planning sources transferred into this handoff
 
@@ -114,10 +120,12 @@ authorizations.
 - The source repository has descriptors, the empty allowlisted
   `provenance.json`, candidate Corbis image assets copied from the production
   application's default branch, a portable static test suite, and concise MIT
-  license, security, and support documents. The image assets still require
-  public-release approval. `v0.1.0` is a signed historical source tag, but it
-  has no valid thin-connector direct-client acceptance evidence because of the
-  MCP server-name collision. `0.1.1` remains an untagged candidate.
+  license, security, and support documents. `v0.1.0` is a signed historical
+  source tag, but it has no valid thin-connector direct-client acceptance
+  evidence because of the MCP server-name collision. The signed `v0.1.1` tag
+  fixes that descriptor collision, but it also has no recorded direct-client
+  acceptance evidence. The untagged `0.1.2` documentation candidate must be
+  reviewed and tagged independently before promotion.
 - Marketplace main contained the `corbis` policy and `corbis-mcp-v1` profile
   at `9af39cab5b1ff5e415c6ac50bd790aa107aa5ef0` on 2026-08-14. There is no
   promoted payload, catalog entry, digest-bound evidence, or signed
@@ -132,8 +140,8 @@ authorizations.
 
 ### High priority: source package and production proof
 
-- Resolve the open public-material decisions, review the existing source
-  package, and obtain the explicit signed-tag authorization.
+- Review the `0.1.2` documentation candidate and obtain explicit authorization
+  before creating any future signed source tag.
 - Decide whether to integrate local application test commit `c85d1e16b` with
   the readiness candidate, then complete its independent review, merge,
   deployment, and live readback before running a redacted authenticated
@@ -146,9 +154,9 @@ authorizations.
 
 - Revalidate the merged dedicated `corbis-mcp-v1` Marketplace profile and
   root-payload promotion support, including containment and allowlist tests,
-  before a source tag is proposed.
-- Promote only a signed source tag, bind Claude Code, Codex CLI, and Cursor
-  local proof to the resulting digest, then admit and attest
+  before promoting `v0.1.1` or any later signed source tag.
+- Promote only an immutable signed source tag, bind Claude Code, Codex CLI,
+  and Cursor local proof to the resulting digest, then admit and attest
   `corbis@agentic-assets`.
 
 ### Medium priority: public discovery and wider clients
