@@ -681,7 +681,10 @@ class PackageContractTests(unittest.TestCase):
         changelog = (REPOSITORY_ROOT / "CHANGELOG.md").read_text(encoding="utf-8")
         self.assertRegex(
             changelog,
-            rf"^## {re.escape(RELEASE_VERSION)} - (?:Unreleased|\d{{4}}-\d{{2}}-\d{{2}})$",
+            re.compile(
+                rf"^## {re.escape(RELEASE_VERSION)} - (?:Unreleased|\d{{4}}-\d{{2}}-\d{{2}})$",
+                re.MULTILINE,
+            ),
             "The current source candidate must have a matching release-material entry",
         )
 
