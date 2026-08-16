@@ -36,10 +36,24 @@ and Cursor. Each descriptor identifies the same remote endpoint:
 https://www.corbis.ai/api/mcp/universal
 ```
 
+The connector has separate human-facing and technical identities:
+
+| Purpose | Value |
+| --- | --- |
+| Human-facing connector label | `Corbis` |
+| Package identifier | `corbis` |
+| Technical MCP server identifier | `corbis-mcp` |
+| Marketplace selector | `corbis@agentic-assets` |
+
 Every descriptor uses the stable `corbis-mcp` server identifier under its
 `mcpServers` key. It is intentionally distinct from the package name
-`corbis` and the future Marketplace selector `corbis@agentic-assets`, so it
-does not collide with the separate Corbis Research MCP configuration.
+`corbis` and the Marketplace selector, so it does not collide with the
+separate Corbis Research MCP configuration. Claude and Codex expose supported
+plugin display-name fields set to `Corbis`. Their MCP server maps, and Cursor's
+current MCP configuration, do not provide a supported per-server display-label
+field. A client that displays the map key in server settings may therefore
+show `corbis-mcp`; this package must not add an undocumented field or rename
+the key to recreate the known collision.
 
 OAuth is the normal authentication path. The Corbis service, not this package,
 decides which tools an authenticated account may use and enforces authorization
@@ -84,9 +98,10 @@ collision by using `corbis-mcp`; its tag object
 `ff16d89bf37f291cd643711233ed255f934dc446` points to source commit
 `3fb5b4659ed971f409c0d70135d654f21da4db08` on `main`.
 
-The `0.1.2` source release record is dated 2026-08-14. It records the current
-descriptor version but does not assert a signed `v0.1.2` tag. Neither the
-`v0.1.1` tag nor the `0.1.2` record proves that any native client accepted the
+The `v0.1.2` source tag is annotated and peels to
+`d96a9c7520ab3d572e5510e9cf5a257a444df21f`. Its SSH signature could not be
+trusted-verified on 2026-08-16 because the signing key was unknown. Neither
+the `v0.1.1` nor the `v0.1.2` tag proves that any native client accepted the
 connector. No Marketplace admission or public-directory listing is claimed.
 
 For the full Corbis research experience, visit [corbis.ai](https://www.corbis.ai/).
@@ -120,12 +135,13 @@ It does not authenticate or invoke tools.
 
 ## Release Status
 
-The source package includes concise license, security, and support materials,
-and `v0.1.1` is a signed source tag. Independent direct-client acceptance,
-Marketplace promotion, digest-bound evidence, admission, externally trusted
-attestation, production readback, and public publication remain separate
-steps. The `0.1.2` source record requires a signed source tag before it can be
-considered for promotion.
+The source package includes concise license, security, and support materials.
+The `v0.1.2` source snapshot was promoted into an immutable Marketplace
+payload, but that promotion does not establish client acceptance, admission,
+attestation, production readback, or public publication. A future source
+release must be reviewed, signed with a trusted key, and tested in each
+supported client. That client evidence must include the actual connector label
+shown in settings, not only the Marketplace or plugin card title.
 
 See the [source record](docs/04-source-record.md),
 [security and acceptance plan](docs/03-security-and-acceptance.md), and

@@ -71,13 +71,16 @@ application change.
 Record every result against the exact source commit/release tag, descriptor
 version, endpoint, client version, operating system/host, authentication state,
 adapter/installation route, test prompt or operation class, result, and
-evidence location. Redact user and credential data.
+evidence location. Record the observed human-facing plugin-card label and the
+observed post-install MCP settings label separately. Redact user and credential
+data.
 
 | Lane | Before source release | Before Marketplace admission | What it does not establish |
 | --- | --- | --- | --- |
 | Static package tests | Required | Re-run through staged payload validation | Server health or client acceptance |
 | Claude strict validation | Required | Required for promoted descriptor | Claude Desktop, Cowork, or directory publication |
 | Codex native configuration validation | Required | Required for promoted descriptor | Codex desktop or public-directory publication |
+| Human-facing label readback | Required for every client route tested | Required and digest-bound | A different client or a Marketplace card uses the same label |
 | Controlled direct Cursor local acceptance | Required evidence lane | Required and digest-bound | Cursor Team Marketplace acceptance |
 | MCP Inspector or protocol client | Required against the selected endpoint | Re-run when source/endpoint changes | OAuth experience in every native client |
 | Controlled direct Claude Code acceptance | Required evidence lane | Required and digest-bound | Claude Desktop, Cowork, web/mobile, or directory acceptance |

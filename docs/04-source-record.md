@@ -1,6 +1,6 @@
 # Corbis MCP decision and source record
 
-**Record date:** 2026-08-14
+**Record date:** 2026-08-16
 
 This is the durable handoff record for the first source-package implementation.
 It is not a release record and must be revalidated before any visibility,
@@ -13,7 +13,8 @@ submission, deployment, or Marketplace action.
 | Canonical editable source | Decided | `Agentic-Assets/corbis-mcp` |
 | Package ID | Decided | `corbis` |
 | MCP server identifier | Decided | `corbis-mcp`, distinct from the package ID and the Corbis Research server identifier `corbis` |
-| Display name | Decided | `Corbis` |
+| Human-facing plugin display label | Decided | `Corbis` in the supported Claude and Codex display-name fields |
+| MCP settings label | Client-dependent | A client may render the technical `mcpServers` key; this source package has no supported per-server display-label field |
 | Publisher | Decided | `Agentic Assets` |
 | Remote endpoint | Decided | `https://www.corbis.ai/api/mcp/universal` |
 | Private Marketplace selector | Decided, not admitted | `corbis@agentic-assets` |
@@ -45,9 +46,21 @@ updates its matching descriptors, validation, and release records. Its remote
 tag object is
 `ff16d89bf37f291cd643711233ed255f934dc446`; it peels to
 `3fb5b4659ed971f409c0d70135d654f21da4db08`, which is reachable from `main`.
-Neither source tag is direct-client acceptance. Re-read the remote default
-branch, current visibility, branches, pull requests, and signed tags before
-any further release action.
+Neither source tag is direct-client acceptance. The later `v0.1.2` tag object
+`6219c55ee79eb0031ea73bfe167a08dac39c202e` peels to current `main` commit
+`d96a9c7520ab3d572e5510e9cf5a257a444df21f`. It has an SSH signature, but
+GitHub reported the signer as `unknown_key` on 2026-08-16; do not describe it
+as trusted-verified. Marketplace promoted its immutable source payload digest
+`1b94a0e92112cb6a22a947a0bb19e64675342445d0f2ad61ea540fae7eecd9ef` on
+2026-08-15. That promotion is not client acceptance, admission, attestation,
+or production proof.
+
+The `0.1.3` source candidate preserves `corbis-mcp` as the technical server
+identifier and reinforces `Corbis` as the supported human-facing plugin label.
+It documents the current client limitation: a settings surface that renders
+the MCP map key cannot be changed by an unsupported source-descriptor field.
+Re-read the remote default branch, current visibility, branches, pull requests,
+and signed tags before any further release action.
 
 ## Upstream planning sources transferred into this handoff
 
@@ -122,15 +135,19 @@ authorizations.
   application's default branch, a portable static test suite, and concise MIT
   license, security, and support documents. `v0.1.0` is a signed historical
   source tag, but it has no valid thin-connector direct-client acceptance
-  evidence because of the MCP server-name collision. The signed `v0.1.1` tag
-  fixes that descriptor collision, but it also has no recorded direct-client
-  acceptance evidence. The `0.1.2` source release record is dated 2026-08-14
-  and records the current descriptor version, but it does not assert a signed
-  `v0.1.2` tag or authorize promotion.
-- Marketplace main contained the `corbis` policy and `corbis-mcp-v1` profile
-  at `9af39cab5b1ff5e415c6ac50bd790aa107aa5ef0` on 2026-08-14. There is no
-  promoted payload, catalog entry, digest-bound evidence, or signed
-  attestation.
+  evidence because of the MCP server-name collision. The `v0.1.1` tag fixes
+  that descriptor collision, but it also has no recorded direct-client
+  acceptance evidence. `v0.1.2` has an SSH signature whose trust could not be
+  verified with the available signer configuration, and it likewise has no
+  recorded direct-client acceptance evidence.
+- Marketplace contains the immutable payload promoted from `v0.1.2`, but its
+  source promotion does not supply a verified client settings-label readback,
+  digest-bound direct-client acceptance, admission, or signed attestation.
+- Current client schemas do not provide a supported source-controlled
+  per-server label field. A source release cannot honestly claim the post-
+  installation settings label is `Corbis` until each applicable client route
+  demonstrates that behavior. The application owner may separately assess MCP
+  `serverInfo` metadata, but that is not a source-package change.
 - Public-directory eligibility, forms, permissions, and client support may
   change. Re-read official documentation immediately before submission.
 - The application candidate still requires an integration decision for local
@@ -141,8 +158,9 @@ authorizations.
 
 ### High priority: source package and production proof
 
-- Obtain explicit authorization before creating any future signed source tag
-  for the `0.1.2` source record.
+- Obtain explicit authorization before creating a new trusted signed source tag
+  for the `0.1.3` candidate. Preserve the tag-object and peeled-commit SHAs and
+  verify the signer with the configured trust material.
 - Decide whether to integrate local application test commit `c85d1e16b` with
   the readiness candidate, then complete its independent review, merge,
   deployment, and live readback before running a redacted authenticated
@@ -155,7 +173,7 @@ authorizations.
 
 - Revalidate the merged dedicated `corbis-mcp-v1` Marketplace profile and
   root-payload promotion support, including containment and allowlist tests,
-  before promoting `v0.1.1` or any later signed source tag.
+  before promoting any later signed source tag.
 - Promote only an immutable signed source tag, bind Claude Code, Codex CLI,
   and Cursor local proof to the resulting digest, then admit and attest
   `corbis@agentic-assets`.
