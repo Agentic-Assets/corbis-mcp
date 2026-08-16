@@ -5,6 +5,12 @@ not an authorization.
 
 ## Evaluation
 
+- **Publish a current public product image** (confidence: verified gap;
+  priority: high)
+  Use a source-approved or live-derived image that does not contain the stale
+  `400,079` corpus figure. Verify any displayed corpus number against the live
+  Corbis page immediately before committing it to this public source package.
+
 - **Capture exact client label readbacks** (confidence: verified release gap;
   priority: high)
   In clean Claude Code, Codex CLI, and Cursor profiles, record the Marketplace

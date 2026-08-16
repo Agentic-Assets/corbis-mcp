@@ -11,6 +11,9 @@ All notable changes to this source package are documented here.
   human-facing display labels from package and MCP identifiers. The tests
   reject unsupported per-server display-label fields rather than silently
   relying on them.
+- Reframed the public README around Corbis, cited research, Research Insights,
+  and Open Datasets; release operations and technical identifiers remain in
+  maintainer documentation.
 - Bumped all client descriptors to patch-release version `0.1.3`.
 
 This candidate does not change the `mcpServers` map key. A client that renders
