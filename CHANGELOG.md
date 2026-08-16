@@ -2,14 +2,34 @@
 
 All notable changes to this source package are documented here.
 
+## 0.1.3 - Unreleased
+
+- Retained `Corbis` as the human-facing plugin and connector label in the
+  supported Claude and Codex display-name fields, while preserving
+  `corbis-mcp` as the collision-safe MCP server identifier.
+- Added source documentation and static regression coverage that distinguish
+  human-facing display labels from package and MCP identifiers. The tests
+  reject unsupported per-server display-label fields rather than silently
+  relying on them.
+- Bumped all client descriptors to patch-release version `0.1.3`.
+
+This candidate does not change the `mcpServers` map key. A client that renders
+that key in its server settings may still show `corbis-mcp`; no supported
+source-descriptor field controls that rendering. Native client acceptance must
+record the actual settings label before a source release is proposed.
+
 ## 0.1.2 - 2026-08-14
 
 - Corrected the source-package release record after the signed `v0.1.1` tag.
 - Bumped all client descriptors to patch-release version `0.1.2` so they are
   distinguishable from the immutable `v0.1.1` snapshot.
 
-This source release record does not assert a signed `v0.1.2` tag. It does not
-establish direct-client acceptance, a Marketplace artifact or admission, or a
+The annotated `v0.1.2` tag object
+`6219c55ee79eb0031ea73bfe167a08dac39c202e` peels to source commit
+`d96a9c7520ab3d572e5510e9cf5a257a444df21f`. Its SSH signature is present,
+but GitHub reported the signing key as unknown on 2026-08-16, so this record
+does not assert trusted signature verification. The source tag does not
+establish direct-client acceptance, Marketplace admission, or a
 public-directory listing.
 
 ## 0.1.1 - 2026-08-14

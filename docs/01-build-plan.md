@@ -73,6 +73,25 @@ The package ID is not the MCP server identifier. The thin connector uses the
 stable MCP server identifier `corbis-mcp` so it does not collide with the
 separate Corbis Research configuration named `corbis`.
 
+#### Human label and technical identifier policy
+
+Treat a human-facing connector label and an MCP server identifier as different
+fields with different compatibility rules:
+
+| Surface | Human-facing label | Technical identifier | Source rule |
+| --- | --- | --- | --- |
+| Claude plugin | `Corbis` | `corbis-mcp` | Use supported `displayName` for the plugin and retain the MCP map key. |
+| Codex plugin | `Corbis` | `corbis-mcp` | Use supported `interface.displayName` for the plugin and retain the MCP map key. |
+| Cursor plugin and MCP configuration | No supported source-controlled server display field | `corbis-mcp` | Do not add an undocumented label field or change the map key. |
+
+The client may render the MCP map key in its settings after installation.
+That rendering is not a reason to reuse `corbis`: the current Corbis Research
+configuration owns that key and historical Codex installation evidence showed
+the collision. A future client schema that adds a server display field may be
+adopted only after its primary documentation and the exact client acceptance
+test establish the behavior. The production MCP server may also expose
+protocol `serverInfo` metadata, but this source repository does not own it.
+
 Do not claim client support that has not been tested. Do not leave temporary
 URLs, generated timestamps, boilerplate about a local runtime, or a generic
 research-toolkit inventory in the final descriptors.
@@ -129,12 +148,15 @@ The initial PR must add portable tests that, at a minimum:
 2. Assert shared metadata consistency and release-version consistency.
 3. Assert both MCP descriptors name `corbis-mcp`, use HTTPS, and exactly use the
    approved endpoint without an embedded credential or query string.
-4. Reject placeholder URLs, private repository URLs, local paths, and
+4. Assert that supported human-facing plugin labels are title-case `Corbis`,
+   remain distinct from technical identifiers, and no unsupported per-server
+   display-label field was introduced.
+5. Reject placeholder URLs, private repository URLs, local paths, and
    unapproved component references.
-5. Confirm every declared local asset and documentation link exists.
-6. Confirm the package contains none of the explicitly prohibited categories
+6. Confirm every declared local asset and documentation link exists.
+7. Confirm the package contains none of the explicitly prohibited categories
    listed below.
-7. Keep an endpoint smoke test distinct from static tests. It must avoid
+8. Keep an endpoint smoke test distinct from static tests. It must avoid
    collecting credentials and must record whether a live network probe ran.
 
 Then run, record, and review:
@@ -144,6 +166,8 @@ Then run, record, and review:
 - the applicable Cursor schema validator;
 - a secret scan and dependency review;
 - a clean direct installation and OAuth flow for the supported direct routes;
+- direct-client readback of the exact connector label shown in settings, with
+  the client and version recorded separately from the plugin-card label;
 - MCP Inspector or equivalent protocol validation against the exact production
   endpoint, including authentication boundaries and representative tools; and
 - a focused security and adversarial review.

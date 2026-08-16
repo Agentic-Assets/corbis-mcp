@@ -37,6 +37,7 @@ PACKAGE_ID = "corbis"
 MCP_SERVER_ID = "corbis-mcp"
 DISPLAY_NAME = "Corbis"
 PUBLISHER = "Agentic Assets"
+RELEASE_VERSION = "0.1.3"
 MANIFEST_FILES = {
     "claude": REPOSITORY_ROOT / ".claude-plugin/plugin.json",
     "codex": REPOSITORY_ROOT / ".codex-plugin/plugin.json",
@@ -647,6 +648,7 @@ class PackageContractTests(unittest.TestCase):
         version = versions.pop()
         self.assertIsInstance(version, str)
         self.assertRegex(str(version), r"^\d+\.\d+\.\d+$", "Version must be plain SemVer")
+        self.assertEqual(version, RELEASE_VERSION, "Descriptor versions must match the documented source candidate")
 
         for manifest_name, manifest in manifests.items():
             self.assertEqual(manifest.get("name"), PACKAGE_ID, f"{manifest_name} package ID drifted")
@@ -656,10 +658,32 @@ class PackageContractTests(unittest.TestCase):
             self.assertEqual(author.get("name"), PUBLISHER, f"{manifest_name} publisher drifted")
             self.assertIn("authenticated account", str(manifest.get("description", "")), f"{manifest_name} must retain entitlement-aware copy")
 
+        self.assertRegex(
+            DISPLAY_NAME,
+            r"^[A-Z][a-z]+(?: [A-Z][a-z]+)*$",
+            "The human-facing connector label must use title case with spaces, not a technical identifier",
+        )
+        self.assertNotEqual(
+            DISPLAY_NAME.lower(),
+            MCP_SERVER_ID,
+            "The human-facing connector label must remain distinct from the technical MCP identifier",
+        )
         self.assertEqual(manifests["claude"].get("displayName"), DISPLAY_NAME)
         codex_interface = manifests["codex"].get("interface")
         self.assertIsInstance(codex_interface, dict)
         self.assertEqual(codex_interface.get("displayName"), DISPLAY_NAME)
+
+        for manifest_name, manifest in manifests.items():
+            description = str(manifest.get("description", ""))
+            self.assertIn(DISPLAY_NAME, description, f"{manifest_name} must use the human-facing connector label")
+            self.assertNotIn(MCP_SERVER_ID, description, f"{manifest_name} must not expose the technical identifier as display copy")
+
+        changelog = (REPOSITORY_ROOT / "CHANGELOG.md").read_text(encoding="utf-8")
+        self.assertRegex(
+            changelog,
+            rf"^## {re.escape(RELEASE_VERSION)} - (?:Unreleased|\d{{4}}-\d{{2}}-\d{{2}})$",
+            "The current source candidate must have a matching release-material entry",
+        )
 
     def test_source_provenance_describes_only_the_source_candidate(self) -> None:
         provenance = load_json(SOURCE_PROVENANCE_FILE)
@@ -714,6 +738,14 @@ class PackageContractTests(unittest.TestCase):
         self.assertEqual(codex_mcp["mcpServers"], {MCP_SERVER_ID: {"url": ENDPOINT}})
         self.assertEqual(cursor_mcp["mcpServers"], {MCP_SERVER_ID: {"url": ENDPOINT}})
 
+        unsupported_server_display_keys = {"displayName", "display_name", "label", "title"}
+        for client_name, mcp_config in (("codex", codex_mcp), ("cursor", cursor_mcp)):
+            server_config = mcp_config["mcpServers"][MCP_SERVER_ID]
+            self.assertTrue(
+                unsupported_server_display_keys.isdisjoint(server_config),
+                f"{client_name} has no supported per-server display-label field; use documented plugin metadata only",
+            )
+
         claude_manifest = load_json(MANIFEST_FILES["claude"])
         claude_mcp = claude_manifest.get("mcpServers")
         self.assertIsInstance(claude_mcp, dict)
@@ -726,11 +758,17 @@ class PackageContractTests(unittest.TestCase):
             claude_mcp[MCP_SERVER_ID]["type"], "http",
             "Claude must use the HTTP transport for the remote endpoint",
         )
+        self.assertTrue(
+            unsupported_server_display_keys.isdisjoint(claude_mcp[MCP_SERVER_ID]),
+            "Claude has no supported per-server display-label field; use documented plugin metadata only",
+        )
 
     def test_readme_matches_the_checked_in_codex_mcp_shape(self) -> None:
         readme = (REPOSITORY_ROOT / "README.md").read_text(encoding="utf-8")
         self.assertIn("`mcpServers`", readme)
         self.assertIn(f"`{MCP_SERVER_ID}`", readme)
+        self.assertIn("| Human-facing connector label | `Corbis` |", readme)
+        self.assertIn("| Technical MCP server identifier | `corbis-mcp` |", readme)
         self.assertNotIn("`mcp_servers`", readme)
 
     def test_no_placeholders_credentials_or_unsafe_urls_appear_in_config(self) -> None:
