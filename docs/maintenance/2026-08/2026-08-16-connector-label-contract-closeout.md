@@ -28,6 +28,9 @@ client-specific server-label field.
   unsupported per-server display-label fields.
 - Added source and acceptance guidance that requires recorded post-install
   settings-label readback for every tested client route.
+- Reframed the public README around Corbis, cited research, Research Insights,
+  and Open Datasets. Release operations, tag history, server identifiers, and
+  test commands remain in maintainer documentation.
 - Corrected the stale source record: `v0.1.2` is an annotated SSH-signed tag
   that points to `d96a9c7520ab3d572e5510e9cf5a257a444df21f`; its signer trust
   is not verified because GitHub reports `unknown_key`. Marketplace has an
@@ -47,6 +50,19 @@ Claude and Codex, but does not document a source-controlled per-server label
 for these MCP maps. The MCP protocol may carry `serverInfo` metadata, but the
 production application owns that metadata and client rendering is not inferred
 from source validation.
+
+The requested Corbis Plugin screenshots were not added. On 2026-08-16, each
+showed the stale `400,079` corpus figure, while the live Corbis page showed
+`423,715+`. Repository policy prohibits reusing a stale corpus figure; the
+downloaded, untracked copies were removed without a commit. A refreshed or
+approved redacted public asset is required before adding a product screenshot.
+
+Follow-on independent README review confirmed and corrected one public-copy
+issue: earlier wording could imply that every compatible client already
+accepted the connection and sign-in flow. The final README makes availability
+conditional on the workspace and account. The reviewer also raised broader
+Research Insights and Open Datasets wording; an independent skeptic refuted
+that concern against the current official product pages.
 
 Independent adversarial review confirmed that this source candidate does not
 change a post-install settings row when that client renders the MCP map key.

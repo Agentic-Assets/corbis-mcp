@@ -766,13 +766,13 @@ class PackageContractTests(unittest.TestCase):
             "Claude has no supported per-server display-label field; use documented plugin metadata only",
         )
 
-    def test_readme_matches_the_checked_in_codex_mcp_shape(self) -> None:
+    def test_readme_prioritizes_the_public_label_over_the_technical_identifier(self) -> None:
         readme = (REPOSITORY_ROOT / "README.md").read_text(encoding="utf-8")
-        self.assertIn("`mcpServers`", readme)
-        self.assertIn(f"`{MCP_SERVER_ID}`", readme)
-        self.assertIn("| Human-facing connector label | `Corbis` |", readme)
-        self.assertIn("| Technical MCP server identifier | `corbis-mcp` |", readme)
-        self.assertNotIn("`mcp_servers`", readme)
+        self.assertIn("# Corbis MCP", readme)
+        self.assertIn("Peer-reviewed research at the speed of conversation.", readme)
+        self.assertNotIn(f"`{MCP_SERVER_ID}`", readme)
+        self.assertNotIn("`mcpServers`", readme)
+        self.assertNotIn("Marketplace selector", readme)
 
     def test_no_placeholders_credentials_or_unsafe_urls_appear_in_config(self) -> None:
         configuration = {
