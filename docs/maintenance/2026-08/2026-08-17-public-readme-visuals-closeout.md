@@ -10,6 +10,8 @@
 not a source release, client acceptance record, Marketplace promotion, or
 production claim.
 
+**Draft PR:** `https://github.com/Agentic-Assets/corbis-mcp/pull/11`
+
 ## What changed
 
 - Added a current Corbis landing-page visual to the public README.
@@ -41,12 +43,21 @@ reused because they visibly showed the stale `400,079` corpus figure. The
 fresh screenshots preserve the requested dimensions and page areas without
 repeating that stale claim.
 
-## Verification and remaining gates
+## Verification
 
-The image dimensions, PNG decoding, local README links, static package tests,
-and release-material test gate must be re-run on the final commit. These checks
-do not establish direct-client acceptance, OAuth, MCP runtime initialization,
-Marketplace admission, source release, or production readback.
+At source commit `714b9d5a4bb140d84d375f38bea6529a48562ffb`:
+
+- `PYTHONDONTWRITEBYTECODE=1 python3 tests/validate_package.py` passed: 15
+  tests.
+- `PYTHONDONTWRITEBYTECODE=1 python3 tests/validate_package.py --release`
+  passed: 15 tests.
+- `git diff --check origin/main...HEAD` passed.
+- Independent copy, asset-provenance, and security reviews found no remaining
+  package-boundary or stale-figure issue. They confirmed that the fresh hero is
+  deliberately not the old byte-identical image.
+
+These checks do not establish direct-client acceptance, OAuth, MCP runtime
+initialization, Marketplace admission, source release, or production readback.
 
 The separate `0.1.3` source candidate still requires Cayman approval before
 merge, explicit authorization for a trusted signed tag, and a later immutable
