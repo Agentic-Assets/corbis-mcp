@@ -4,6 +4,8 @@
 
 **Base:** `origin/main` at `493b06d31f532af12294646812eb25ad33e661db`
 
+**Implementation commit:** `d239004da5ec47b85f4afee41ec1aa6049c9d8de`
+
 **State at this record:** documentation and public image assets only. This is
 not a source release, client acceptance record, Marketplace promotion, or
 production claim.
