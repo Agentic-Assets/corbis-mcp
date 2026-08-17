@@ -14,7 +14,7 @@ production claim.
 
 ## What changed
 
-- Added a current Corbis landing-page visual to the public README.
+- Added a user-supplied Corbis landing-page visual to the public README.
 - Added a current Research Insights visual to the public README.
 - Added the requested public Open Datasets visual from
   `Agentic-Assets/Corbis-Plugin` `origin/master`.
@@ -23,9 +23,11 @@ production claim.
 
 ## Asset evidence
 
-The Corbis landing page was opened through `agent-browser` on 2026-08-17 and
-captured at the original `1943 x 1252` viewport. The visual shows the then-live
-`423,715+` corpus figure.
+The landing-page asset currently in the source package was supplied directly
+by the user on 2026-08-17. It is `1148 x 690`, has SHA-256
+`d41e568034f7c34e0ce4f1ae13196abe676beed2a5574bb85dc5b1fece59898f`, and
+visibly shows `423,715+`. It replaces the earlier `agent-browser` capture at
+the original `1943 x 1252` viewport.
 
 Research Insights was opened through `agent-browser` on the same date and
 captured at the original `1384 x 1257` viewport. It shows the then-live
@@ -40,8 +42,8 @@ the separate research-workflow package.
 
 The old Corbis Plugin landing-page and Research Insights screenshots were not
 reused because they visibly showed the stale `400,079` corpus figure. The
-fresh screenshots preserve the requested dimensions and page areas without
-repeating that stale claim.
+current landing-page and Research Insights visuals do not repeat that stale
+claim.
 
 ## Verification
 
@@ -53,8 +55,9 @@ At source commit `714b9d5a4bb140d84d375f38bea6529a48562ffb`:
   passed: 15 tests.
 - `git diff --check origin/main...HEAD` passed.
 - Independent copy, asset-provenance, and security reviews found no remaining
-  package-boundary or stale-figure issue. They confirmed that the fresh hero is
-  deliberately not the old byte-identical image.
+  package-boundary or stale-figure issue. The old byte-identical hero remains
+  intentionally excluded; this user-supplied replacement is now the source
+  asset.
 
 These checks do not establish direct-client acceptance, OAuth, MCP runtime
 initialization, Marketplace admission, source release, or production readback.

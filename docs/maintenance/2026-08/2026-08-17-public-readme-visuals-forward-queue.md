@@ -18,8 +18,8 @@ is a prioritized menu, not an authorization or release plan.
   verified recurring-risk control; priority: high)
   Confirm every visible corpus or capability claim against the live Corbis page
   immediately before release. Replace, rather than reuse, any visual that has
-  become stale; preserve its intended viewport dimensions and page area when
-  refreshing it.
+  become stale; preserve its intended viewport dimensions and page area unless
+  the product owner supplies a deliberate replacement.
 
 - **Keep public-image provenance explicit** (confidence: implemented control;
   priority: medium)

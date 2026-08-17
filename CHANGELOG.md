@@ -14,9 +14,8 @@ All notable changes to this source package are documented here.
 - Reframed the public README around Corbis, cited research, Research Insights,
   and Open Datasets; release operations and technical identifiers remain in
   maintainer documentation.
-- Added a fresh, live-derived landing-page image and Research Insights image,
-  plus the requested public Open Datasets image, to the public README. The
-  captured views use the same dimensions as their previous public counterparts.
+- Added the user-supplied Corbis landing-page image, a fresh Research Insights
+  image, and the requested public Open Datasets image to the public README.
 - Bumped all client descriptors to patch-release version `0.1.3`.
 
 This candidate does not change the `mcpServers` map key. A client that renders
