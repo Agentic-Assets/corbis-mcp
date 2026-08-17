@@ -770,9 +770,23 @@ class PackageContractTests(unittest.TestCase):
         readme = (REPOSITORY_ROOT / "README.md").read_text(encoding="utf-8")
         self.assertIn("# Corbis MCP", readme)
         self.assertIn("Peer-reviewed research at the speed of conversation.", readme)
+        for image in (
+            "assets/corbis-landing-page.png",
+            "assets/corbis-research-insights.png",
+            "assets/corbis-datasets.png",
+        ):
+            self.assertIn(image, readme)
         self.assertNotIn(f"`{MCP_SERVER_ID}`", readme)
         self.assertNotIn("`mcpServers`", readme)
         self.assertNotIn("Marketplace selector", readme)
+
+    def test_readme_visuals_are_decodable_public_pngs(self) -> None:
+        for relative_path in (
+            Path("assets/corbis-landing-page.png"),
+            Path("assets/corbis-research-insights.png"),
+            Path("assets/corbis-datasets.png"),
+        ):
+            validate_release_png(REPOSITORY_ROOT / relative_path, relative_path)
 
     def test_no_placeholders_credentials_or_unsafe_urls_appear_in_config(self) -> None:
         configuration = {
