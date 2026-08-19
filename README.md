@@ -1,7 +1,5 @@
 <div align="center">
 
-[![Corbis](assets/logo.png)](https://www.corbis.ai/)
-
 # Corbis MCP
 
 **Peer-reviewed research at the speed of conversation.**
