@@ -15,6 +15,14 @@ economics research with sources you can inspect.
 
 ---
 
+<div align="center">
+
+[![Corbis: professional-grade AI for finance and real estate](assets/corbis-landing-page.png)](https://www.corbis.ai/)
+
+[corbis.ai](https://www.corbis.ai/)
+
+</div>
+
 ## Research You Can Stand Behind
 
 [Corbis](https://www.corbis.ai/) is a research-first AI platform for finance,
@@ -34,17 +42,29 @@ you do rather than a static technical tool list.
 
 ### Research Insights
 
-Compare journals with publication statistics, bibliometrics, and research
-impact indicators for journal selection and evaluation.
+Journal-level publication statistics, bibliometrics, and a corpus overview in
+the Corbis research database.
 
-[Open Research Insights](https://www.corbis.ai/insights)
+<div align="center">
+
+[![Research Insights: journal analytics and bibliometrics in Corbis](assets/corbis-research-insights.png)](https://www.corbis.ai/insights)
+
+[corbis.ai/insights](https://www.corbis.ai/insights)
+
+</div>
 
 ### Open Datasets
 
-Find curated open research datasets across finance, economics, accounting, and
-real estate. Search by topic, region, or use case to find relevant data.
+Corbis hosts a curated collection of mostly free finance research datasets.
+Browse by topic, region, or use case to find relevant data.
 
-[Browse Open Datasets](https://www.corbis.ai/datasets)
+<div align="center">
+
+[![Open Datasets: curated finance research datasets in Corbis](assets/corbis-datasets.png)](https://www.corbis.ai/datasets)
+
+[corbis.ai/datasets](https://www.corbis.ai/datasets)
+
+</div>
 
 ### Cited Research, Where You Work
 
