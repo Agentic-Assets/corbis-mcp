@@ -15,8 +15,8 @@ readback, or directory publication.
 
 - Added `https://www.corbis.ai` as the canonical `homepage` value in the
   Claude, Codex, and Cursor client descriptors.
-- Added the supported Codex `interface.websiteURL` value. This is the metadata
-  the Codex and ChatGPT plugin detail surface uses for its Website row.
+- Added the supported Codex `interface.websiteURL` value, the documented
+  install-surface external-link metadata for the Codex and ChatGPT descriptor.
 - Bumped all three descriptors to `0.1.5` and added static regression checks
   for the shared homepage and Codex presentation URL.
 
@@ -34,8 +34,8 @@ readback, or directory publication.
 
 ## Boundaries
 
-The Codex and ChatGPT plugin detail surface shares the Codex descriptor, so
-the supported `interface.websiteURL` is included there. The common `homepage`
-field is included in Claude and Cursor descriptors. Static validation does not
-prove that a distinct client cache, ChatGPT web or mobile, Claude Desktop,
-Cowork, or Cursor workspace has refreshed and rendered the new metadata.
+Codex and ChatGPT use the Codex descriptor, so the supported
+`interface.websiteURL` is included there. The common `homepage` field is
+included in Claude and Cursor descriptors. Static validation does not prove
+that a distinct client cache, ChatGPT web or mobile, Claude Desktop, Cowork,
+or Cursor workspace has refreshed and rendered the new metadata.

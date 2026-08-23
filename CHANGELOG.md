@@ -6,7 +6,8 @@ All notable changes to this source package are documented here.
 
 - Declared `https://www.corbis.ai` as the canonical homepage in every client
   descriptor and as Codex `interface.websiteURL`, so the Codex plugin details
-  view can display the Corbis website instead of “Unavailable”.
+  view has the supported metadata needed to display the Corbis website instead
+  of “Unavailable”.
 - Added static regression coverage for the shared homepage and Codex website
   metadata.
 - Bumped all client descriptors to patch-release version `0.1.5`.
