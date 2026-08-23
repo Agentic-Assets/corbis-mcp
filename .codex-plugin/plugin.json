@@ -1,10 +1,11 @@
 {
   "name": "corbis",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Connect compatible MCP clients to Corbis through the production remote endpoint. Tool availability depends on the authenticated account and service authorization.",
   "author": {
     "name": "Agentic Assets"
   },
+  "homepage": "https://www.corbis.ai",
   "repository": "https://github.com/Agentic-Assets/corbis-mcp",
   "mcpServers": "./.mcp.json",
   "interface": {
@@ -12,6 +13,7 @@
     "composerIcon": "./assets/icon.png",
     "shortDescription": "Connect to the Corbis remote MCP service.",
     "longDescription": "Connect to Corbis through its production remote MCP endpoint. OAuth is the normal authentication path, and tool availability depends on the authenticated account and service authorization.",
-    "developerName": "Agentic Assets"
+    "developerName": "Agentic Assets",
+    "websiteURL": "https://www.corbis.ai"
   }
 }
