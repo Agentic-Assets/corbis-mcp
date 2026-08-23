@@ -2,6 +2,14 @@
 
 All notable changes to this source package are documented here.
 
+## 0.1.4 - Unreleased
+
+- Replaced the Codex plugin icon with the exact Corbis Research icon and
+  declared it through the supported Codex `interface.composerIcon` field.
+- Added a static regression check for the approved icon digest and manifest
+  reference so Marketplace promotions retain the same card icon.
+- Bumped all client descriptors to patch-release version `0.1.4`.
+
 ## 0.1.3 - Unreleased
 
 - Retained `Corbis` as the human-facing plugin and connector label in the
