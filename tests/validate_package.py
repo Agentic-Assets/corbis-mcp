@@ -34,11 +34,12 @@ from urllib.request import Request, urlopen
 REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
 ENDPOINT = "https://www.corbis.ai/api/mcp/universal"
 REPOSITORY_URL = "https://github.com/Agentic-Assets/corbis-mcp"
+WEBSITE_URL = "https://www.corbis.ai"
 PACKAGE_ID = "corbis"
 MCP_SERVER_ID = "corbis-mcp"
 DISPLAY_NAME = "Corbis"
 PUBLISHER = "Agentic Assets"
-RELEASE_VERSION = "0.1.4"
+RELEASE_VERSION = "0.1.5"
 CORBIS_RESEARCH_ICON_SHA256 = "80188a21893d91b9e18f603bce504df80f85ad068bed06cb25a0de9d87545984"
 MANIFEST_FILES = {
     "claude": REPOSITORY_ROOT / ".claude-plugin/plugin.json",
@@ -171,14 +172,14 @@ LOCAL_OR_PRIVATE_PATH_PATTERN = re.compile(
 )
 MANIFEST_ALLOWED_KEYS = {
     "claude": {
-        "$schema", "name", "displayName", "version", "description", "author",
+        "$schema", "name", "displayName", "version", "description", "author", "homepage",
         "repository", "mcpServers", "defaultEnabled",
     },
     "codex": {
-        "name", "version", "description", "author", "repository", "mcpServers", "interface",
+        "name", "version", "description", "author", "homepage", "repository", "mcpServers", "interface",
     },
     "cursor": {
-        "name", "version", "description", "author", "repository", "mcpServers",
+        "name", "version", "description", "author", "homepage", "repository", "mcpServers",
     },
 }
 
@@ -655,6 +656,7 @@ class PackageContractTests(unittest.TestCase):
         for manifest_name, manifest in manifests.items():
             self.assertEqual(manifest.get("name"), PACKAGE_ID, f"{manifest_name} package ID drifted")
             self.assertEqual(manifest.get("repository"), REPOSITORY_URL, f"{manifest_name} repository drifted")
+            self.assertEqual(manifest.get("homepage"), WEBSITE_URL, f"{manifest_name} website drifted")
             author = manifest.get("author")
             self.assertIsInstance(author, dict, f"{manifest_name} author must be an object")
             self.assertEqual(author.get("name"), PUBLISHER, f"{manifest_name} publisher drifted")
@@ -674,6 +676,7 @@ class PackageContractTests(unittest.TestCase):
         codex_interface = manifests["codex"].get("interface")
         self.assertIsInstance(codex_interface, dict)
         self.assertEqual(codex_interface.get("displayName"), DISPLAY_NAME)
+        self.assertEqual(codex_interface.get("websiteURL"), WEBSITE_URL)
         self.assertEqual(codex_interface.get("composerIcon"), "./assets/icon.png")
         self.assertEqual(
             hashlib.sha256((REPOSITORY_ROOT / "assets/icon.png").read_bytes()).hexdigest(),
