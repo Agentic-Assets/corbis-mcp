@@ -1,6 +1,6 @@
 {
   "name": "corbis",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "Connect compatible MCP clients to Corbis through the production remote endpoint. Tool availability depends on the authenticated account and service authorization.",
   "author": {
     "name": "Agentic Assets"

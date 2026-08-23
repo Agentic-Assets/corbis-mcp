@@ -18,6 +18,7 @@ does not start OAuth, and does not invoke a tool.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import os
 import re
@@ -37,7 +38,8 @@ PACKAGE_ID = "corbis"
 MCP_SERVER_ID = "corbis-mcp"
 DISPLAY_NAME = "Corbis"
 PUBLISHER = "Agentic Assets"
-RELEASE_VERSION = "0.1.3"
+RELEASE_VERSION = "0.1.4"
+CORBIS_RESEARCH_ICON_SHA256 = "80188a21893d91b9e18f603bce504df80f85ad068bed06cb25a0de9d87545984"
 MANIFEST_FILES = {
     "claude": REPOSITORY_ROOT / ".claude-plugin/plugin.json",
     "codex": REPOSITORY_ROOT / ".codex-plugin/plugin.json",
@@ -672,6 +674,12 @@ class PackageContractTests(unittest.TestCase):
         codex_interface = manifests["codex"].get("interface")
         self.assertIsInstance(codex_interface, dict)
         self.assertEqual(codex_interface.get("displayName"), DISPLAY_NAME)
+        self.assertEqual(codex_interface.get("composerIcon"), "./assets/icon.png")
+        self.assertEqual(
+            hashlib.sha256((REPOSITORY_ROOT / "assets/icon.png").read_bytes()).hexdigest(),
+            CORBIS_RESEARCH_ICON_SHA256,
+            "Codex must use the exact approved Corbis Research icon",
+        )
 
         for manifest_name, manifest in manifests.items():
             description = str(manifest.get("description", ""))
