@@ -430,6 +430,57 @@ Run on this branch's edited tree (macOS host, 2026-08-24):
   reference, so the probe was not repeated.
 - The exact commit is recorded in the pull request for this branch.
 
+## Session closeout (2026-08-24)
+
+Branch `docs/corbis-directory-submission-readiness` off `main` at `34c9494`.
+
+Commits:
+
+- `1b35300` fix: add Corbis privacy, terms, license, and logo metadata
+- `119f198` docs: record public-directory submission readiness
+- the commit that adds this section (decision record only)
+
+State: pushed; draft PR #14 is open against `main`. Merge, the `v0.1.6`
+signed tag, Marketplace promotion, and every portal submission remain founder
+gates (Linear AGENTIC-2488). Application follow-ups are AGENTIC-2489.
+
+### Decisions and rejected alternatives
+
+- Portal submission was not attempted through a signed-in browser session.
+  The Claude-in-Chrome extension reported "not connected" on repeated
+  attempts, and using a founder's saved browser profile or credentials is
+  outside agent authority. Rejected: driving `agent-browser` against a copied
+  Chrome profile.
+- No pull request to `openai/plugins` or `anthropics/claude-plugins-community`.
+  OpenAI keeps pull requests disabled on its directory repository and vendors
+  entries by hand, and the Anthropic community mirror is populated from portal
+  submissions. Rejected: opening a speculative PR that would be closed.
+- Only documented descriptor fields were added (Codex
+  `interface.privacyPolicyURL` and `interface.termsOfServiceURL`; Cursor
+  `license` and `logo`). Rejected: adding OpenAI-portal-only values such as
+  the 30-character short description to `.codex-plugin/plugin.json`, because
+  the Codex manifest schema does not carry them; they live in the packet.
+- `openWorldHint` and the `/.well-known/openai-apps-challenge` route were
+  routed to `agentic-assets-app` rather than emulated here. The server owns
+  tool annotations and public routes; this package never carries a tool
+  catalog.
+- No Linear repository label was invented for `corbis-mcp`. The gate issue
+  carries only `Needs Cayman` and `Human-Signoff`; the app issue carries the
+  existing `Agentic-Assets/agentic-assets-app` label.
+- Cursor Directory (`cursor.directory/plugins/new`) is the primary Cursor
+  lane and the Marketplace publish form is secondary, following the
+  2026-07-07 staff statement recorded in Lane D. In-app visibility of
+  directory listings is still unverified.
+
+### Deliberately deferred
+
+- The `v0.1.6` signed tag, GitHub Release, and Marketplace promotion wait for
+  merge approval.
+- `--smoke` was not re-run after the descriptor edits because the endpoint
+  reference did not change.
+- MCP Registry publication (Lane E) is optional and needs a founder GitHub
+  device-flow login.
+
 ## Boundaries
 
 - Nothing in this record is a directory submission or listing. Each platform
