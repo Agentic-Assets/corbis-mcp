@@ -35,11 +35,14 @@ REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
 ENDPOINT = "https://www.corbis.ai/api/mcp/universal"
 REPOSITORY_URL = "https://github.com/Agentic-Assets/corbis-mcp"
 WEBSITE_URL = "https://www.corbis.ai"
+PRIVACY_POLICY_URL = "https://www.corbis.ai/privacy"
+TERMS_OF_SERVICE_URL = "https://www.corbis.ai/terms"
+LICENSE_IDENTIFIER = "MIT"
 PACKAGE_ID = "corbis"
 MCP_SERVER_ID = "corbis-mcp"
 DISPLAY_NAME = "Corbis"
 PUBLISHER = "Agentic Assets"
-RELEASE_VERSION = "0.1.5"
+RELEASE_VERSION = "0.1.6"
 CORBIS_RESEARCH_ICON_SHA256 = "80188a21893d91b9e18f603bce504df80f85ad068bed06cb25a0de9d87545984"
 MANIFEST_FILES = {
     "claude": REPOSITORY_ROOT / ".claude-plugin/plugin.json",
@@ -179,7 +182,7 @@ MANIFEST_ALLOWED_KEYS = {
         "name", "version", "description", "author", "homepage", "repository", "mcpServers", "interface",
     },
     "cursor": {
-        "name", "version", "description", "author", "homepage", "repository", "mcpServers",
+        "name", "version", "description", "author", "homepage", "repository", "license", "logo", "mcpServers",
     },
 }
 
@@ -677,7 +680,14 @@ class PackageContractTests(unittest.TestCase):
         self.assertIsInstance(codex_interface, dict)
         self.assertEqual(codex_interface.get("displayName"), DISPLAY_NAME)
         self.assertEqual(codex_interface.get("websiteURL"), WEBSITE_URL)
+        self.assertEqual(codex_interface.get("privacyPolicyURL"), PRIVACY_POLICY_URL)
+        self.assertEqual(codex_interface.get("termsOfServiceURL"), TERMS_OF_SERVICE_URL)
         self.assertEqual(codex_interface.get("composerIcon"), "./assets/icon.png")
+        cursor_manifest = manifests["cursor"]
+        self.assertEqual(cursor_manifest.get("license"), LICENSE_IDENTIFIER)
+        self.assertEqual(cursor_manifest.get("logo"), "./assets/icon.png")
+        cursor_logo = assert_relative_file_reference(self, "Cursor logo", cursor_manifest.get("logo"))
+        self.assertTrue(cursor_logo.is_relative_to(REPOSITORY_ROOT / "assets"))
         self.assertEqual(
             hashlib.sha256((REPOSITORY_ROOT / "assets/icon.png").read_bytes()).hexdigest(),
             CORBIS_RESEARCH_ICON_SHA256,

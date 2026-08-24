@@ -2,6 +2,19 @@
 
 All notable changes to this source package are documented here.
 
+## 0.1.6 - Unreleased
+
+- Declared the public privacy policy and terms URLs through the documented
+  Codex `interface.privacyPolicyURL` and `interface.termsOfServiceURL`
+  fields, matching the metadata the OpenAI plugin directory requires for an
+  MCP-backed listing.
+- Declared the documented Cursor `license` and relative `logo` fields so a
+  Cursor Marketplace or Cursor Directory index reads the approved icon and
+  license from the manifest.
+- Added static regression coverage for the new metadata and recorded the
+  public-directory submission readiness closeout and forward queue.
+- Bumped all client descriptors to patch-release version `0.1.6`.
+
 ## 0.1.5 - Unreleased
 
 - Declared `https://www.corbis.ai` as the canonical homepage in every client
