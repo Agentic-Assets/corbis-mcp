@@ -17,6 +17,9 @@ part of the public connector package or its future Marketplace payload.
 
 ## Current archive
 
+- [`2026-09/2026-09-09-oauth-smoke-contract-closeout.md`](2026-09/2026-09-09-oauth-smoke-contract-closeout.md)
+  records the live OAuth smoke contract, deterministic regressions, and separate
+  acceptance boundaries, with a linked follow-up record.
 - [`2026-08/`](2026-08/) contains the first Corbis MCP source-handoff closeout
   and its forward queue, plus the source-release-readiness closeout and forward
   queue, README hero-image blocker, and research-focused README closeout and
