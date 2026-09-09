@@ -4,6 +4,11 @@ Date: 2026-09-09. Branch: `fix/corbis-mcp-oauth-smoke-contract`.
 Base: `292ec29b6a9468dbfe07f0359f43eaa6f63c70b2`.
 Implementation: `223826361a9b4b5b89d70d7098e644cd6918a42d`.
 
+This record describes the original PR #15 implementation and its historical
+readback. Its real-tool probe is superseded by the
+[metadata-only correction](2026-09-09-metadata-only-smoke-closeout.md), which
+uses unauthenticated `tools/list` and cannot invoke an application tool.
+
 ## Change
 
 The old live probe checked two metadata documents without asserting the OAuth
@@ -55,6 +60,12 @@ The independent reviewer ran the 44 offline tests and completed adversarial and
 security review of file SHA-256
 `9befe1d9d8448b50bffdee97d9e1bdc7a7286eb860e1f93e6a433ed0954474d9`.
 No actionable findings remain in that file.
+
+That statement records the local review at the time. The later GitHub P1
+[metadata-only finding](https://github.com/Agentic-Assets/corbis-mcp/pull/15#discussion_r3972968366)
+was initially refuted against the original task wording, then confirmed by the
+coordinating task. The follow-up correction restores the repository's
+metadata-only boundary. The initial refutation is superseded.
 
 Confirmed and fixed: escaped quoted-string parsing; probe tool and Accept
 header; required response type; missing authorization discovery alias;

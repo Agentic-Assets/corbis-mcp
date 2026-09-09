@@ -17,6 +17,9 @@ part of the public connector package or its future Marketplace payload.
 
 ## Current archive
 
+- [`2026-09/2026-09-09-metadata-only-smoke-closeout.md`](2026-09/2026-09-09-metadata-only-smoke-closeout.md)
+  records the correction from a real tool request to metadata-only discovery,
+  the superseded review disposition, and its live contract check.
 - [`2026-09/2026-09-09-oauth-smoke-contract-closeout.md`](2026-09/2026-09-09-oauth-smoke-contract-closeout.md)
   records the live OAuth smoke contract, deterministic regressions, and separate
   acceptance boundaries, with a linked follow-up record.
