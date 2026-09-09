@@ -11,8 +11,8 @@ until that material has been supplied, but it does not grant founder approval:
 
 Pass --smoke to perform the intentionally separate, unauthenticated endpoint
 and OAuth metadata probes. The smoke probe uses no tokens, does not start
-OAuth, and requires HTTP 401 for an unauthenticated get_data_freshness
-tools/call request. It never registers a client or obtains a token.
+OAuth, and requires HTTP 401 for an unauthenticated tools/list request.
+It never invokes a tool, registers a client, or obtains a token.
 """
 
 from __future__ import annotations
@@ -563,32 +563,31 @@ def validate_live_oauth_smoke(fetcher: SmokeFetcher = fetch_smoke_response) -> l
         raise RuntimeError(f"endpoint returned HTTP {base_response.status}; expected 200 or 401")
     observations.append(f"endpoint: HTTP {base_response.status}")
 
-    tools_call_request = Request(
+    tools_list_request = Request(
         ENDPOINT,
         data=json.dumps(
             {
                 "jsonrpc": "2.0",
                 "id": "oauth-smoke",
-                "method": "tools/call",
-                "params": {"name": "get_data_freshness", "arguments": {}},
+                "method": "tools/list",
             },
             separators=(",", ":"),
         ).encode("utf-8"),
         headers={"Accept": "application/json, text/event-stream", "Content-Type": "application/json"},
         method="POST",
     )
-    tools_call_response = _fetch_exact(fetcher, "unauthenticated tools/call", tools_call_request)
-    if tools_call_response.status != 401:
+    tools_list_response = _fetch_exact(fetcher, "unauthenticated tools/list", tools_list_request)
+    if tools_list_response.status != 401:
         raise RuntimeError(
-            f"unauthenticated tools/call returned HTTP {tools_call_response.status}; expected 401"
+            f"unauthenticated tools/list returned HTTP {tools_list_response.status}; expected 401"
         )
     challenge_url = parse_bearer_resource_metadata_challenge(
-        "unauthenticated tools/call",
-        tools_call_response,
+        "unauthenticated tools/list",
+        tools_list_response,
     )
     if base_challenge_url is not None and base_challenge_url != challenge_url:
-        raise RuntimeError("Endpoint and tools/call challenges advertise different metadata URLs")
-    observations.append("unauthenticated tools/call: HTTP 401 with Bearer challenge")
+        raise RuntimeError("Endpoint and tools/list challenges advertise different metadata URLs")
+    observations.append("unauthenticated tools/list: HTTP 401 with Bearer challenge")
 
     metadata_requests = (
         ("challenged protected-resource metadata", challenge_url),
@@ -1549,7 +1548,7 @@ class OAuthSmokeContractTests(unittest.TestCase):
                 with self.assertRaises(RuntimeError):
                     validate_live_oauth_smoke(FakeSmokeFetcher(responses))
 
-    def test_smoke_requires_tools_call_401_with_matching_challenge(self) -> None:
+    def test_smoke_requires_tools_list_401_with_matching_challenge(self) -> None:
         cases = {
             "wrong status": self.json_response(ENDPOINT, {"jsonrpc": "2.0"}),
             "missing challenge": SmokeHttpResponse(401, {}, b"", ENDPOINT),
@@ -1691,22 +1690,38 @@ class OAuthSmokeContractTests(unittest.TestCase):
         with self.assertRaisesRegex(RuntimeError, "redirected away from its exact URL"):
             validate_live_oauth_smoke(FakeSmokeFetcher(responses))
 
-    def test_tools_call_probe_contains_no_credentials(self) -> None:
+    def test_tools_list_probe_contains_no_credentials_or_tool_invocation(self) -> None:
         fetcher = FakeSmokeFetcher(self.valid_responses())
 
         validate_live_oauth_smoke(fetcher)
 
-        tools_request = next(
-            request for request in fetcher.requests if request.get_method() == "POST"
-        )
+        post_requests = [request for request in fetcher.requests if request.get_method() == "POST"]
+        self.assertEqual(len(post_requests), 1)
+        tools_request = post_requests[0]
         headers = {key.lower(): value for key, value in tools_request.header_items()}
         self.assertNotIn("authorization", headers)
         self.assertNotIn("cookie", headers)
         self.assertEqual(headers["content-type"], "application/json")
         self.assertEqual(headers["accept"], "application/json, text/event-stream")
         payload = json.loads((tools_request.data or b"").decode("utf-8"))
-        self.assertEqual(payload["method"], "tools/call")
-        self.assertEqual(payload["params"]["name"], "get_data_freshness")
+        self.assertEqual(payload, {
+            "jsonrpc": "2.0", "id": "oauth-smoke", "method": "tools/list",
+        })
+
+    def test_auth_regression_never_causes_a_tool_call_or_authentication_attempt(self) -> None:
+        responses = self.valid_responses()
+        responses[("POST", ENDPOINT)] = self.json_response(
+            ENDPOINT, {"jsonrpc": "2.0", "id": "oauth-smoke", "result": {"tools": []}}
+        )
+        fetcher = FakeSmokeFetcher(responses)
+        with self.assertRaisesRegex(RuntimeError, "tools/list returned HTTP 200; expected 401"):
+            validate_live_oauth_smoke(fetcher)
+        self.assertEqual(len(fetcher.requests), 2)
+        self.assertEqual(fetcher.requests[0].get_method(), "GET")
+        self.assertEqual(json.loads(fetcher.requests[1].data), {
+            "jsonrpc": "2.0", "id": "oauth-smoke", "method": "tools/list",
+        })
+        self.assertTrue(all(request.full_url == ENDPOINT for request in fetcher.requests))
 
     def test_live_smoke_opener_ignores_environment_proxy_credentials(self) -> None:
         proxy_handlers = [
@@ -1965,7 +1980,7 @@ def run_smoke_probe() -> None:
         print(observation)
     print(
         "Live smoke probe passed. It sent no credentials, did not start OAuth, "
-        "and get_data_freshness returned HTTP 401 with discovery metadata. "
+        "and tools/list returned HTTP 401 with discovery metadata. No tool was invoked. "
         "This does not prove authenticated OAuth or client acceptance."
     )
 
