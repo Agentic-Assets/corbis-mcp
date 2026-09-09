@@ -2,7 +2,7 @@
 
 Date: 2026-09-09. Branch: `fix/corbis-mcp-metadata-only-smoke`.
 Base: `f18976b72fde28ff6bec10bb3d5413194f67dce1`.
-Implementation: `a23f746b0b521cfa57b3feb02e940bf675998a06`.
+Final implementation: `c58e740cffc634935ae0cf56e46605b17b371856`.
 
 ## Problem and correction
 
@@ -13,37 +13,47 @@ metadata-only. The coordinator confirmed the late
 [P1 review finding](https://github.com/Agentic-Assets/corbis-mcp/pull/15#discussion_r3972968366)
 and superseded the earlier refutation.
 
-The probe now sends one unauthenticated `tools/list` request, with no tool name
-or arguments. It retains the exact HTTP 401 and Bearer discovery challenge
-requirements, JSON/event-stream Accept header, metadata validation, no-redirect
-checks, bounded reads, and credential exclusion. Even an unexpected anonymous
-HTTP 200 stops the probe without an authentication or tool-call attempt.
+The final probe sends only five unauthenticated GET requests: base endpoint
+metadata, root and path-specific protected-resource metadata, and both
+authorization-server aliases. It retains exact resource/issuer/endpoint checks,
+DCR, authorization-code and refresh grants, response type `code`, PKCE `S256`,
+strict JSON parsing, no redirects, bounded reads, and credential exclusion.
+There is no POST, tool request, client registration, or authentication attempt.
+The application and Marketplace own protected-request HTTP 401 and Bearer
+challenge guards. Source smoke does not validate those guards.
 
 The earlier documentation-only correction `d3e1cb4` was preserved as cherry-pick
 `91a182c` before this change. The superseded branch must remain until this
 replacement is merged and its content is preserved.
 
-## Verification and live blocker
+## Verification
 
-- Python 3.14.5: 45 offline tests pass with
+- Python 3.14.5: 38 offline tests pass (15 package, 23 metadata/transport tests) with
   `PYTHONDONTWRITEBYTECODE=1 python3 tests/validate_package.py --release`.
 - Ruff 0.16.4: `ruff check --no-cache tests/validate_package.py` passes.
 - `git diff --check` passes.
 - `PYTHONDONTWRITEBYTECODE=1 python3 tests/validate_package.py --release --smoke`
-  at `2026-09-09T21:04:28.852344+00:00` passed all 45 tests, then failed the live
-  gate: unauthenticated `tools/list` returned HTTP 200, expected 401.
-- A separate credential-free structural readback returned JSON-RPC `result`
-  containing `tools` and `_meta`, with 36 tool descriptions and no Bearer
-  challenge. No tool was invoked and no tool contents were persisted.
+  on the final implementation at `2026-09-09T21:08:01.350330+00:00` passed all
+  38 tests and all five GET probes with HTTP 200 and valid metadata.
+- Regression tests assert exactly those five GET URLs, absent request bodies,
+  absent credentials, and immediate failure on an unexpected base HTTP 401
+  without following its challenge or sending any POST.
+- Reviewed validator SHA-256:
+  `0b07781c08bd84e966c18a345def78183e429e5c32b2f85893baa61b6cc5a26d`.
 
-The service owns this contract mismatch. The source task reported it to the
-coordinator and did not weaken the required assertion or alter the application.
-This record does not claim the live gate or release acceptance has passed.
+## Contract decision
+
+An intermediate `tools/list` probe required HTTP 401 and failed live at
+`2026-09-09T21:04:28.852344+00:00`. A structural readback showed HTTP 200 with
+the public tool catalog, not an authentication error. Historical application
+evidence already recorded public listing. The coordinator explicitly narrowed
+source smoke to GET metadata rather than changing application behavior to fit
+a source test. This resolves the intermediate mismatch by correcting ownership
+and scope; it does not claim a service authentication repair.
 
 ## Evidence boundaries
 
-The source-package offline checks pass. The live metadata-only auth-boundary
-gate remains blocked as recorded above. This work does not register a client,
+The source-package offline checks and live GET metadata probes pass. This work does not register a client,
 authenticate, invoke a tool, change production, promote Marketplace content,
 or submit/publish a directory entry. Direct-client OAuth acceptance and release
 evidence remain separate.

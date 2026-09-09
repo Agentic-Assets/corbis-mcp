@@ -7,7 +7,7 @@ Implementation: `223826361a9b4b5b89d70d7098e644cd6918a42d`.
 This record describes the original PR #15 implementation and its historical
 readback. Its real-tool probe is superseded by the
 [metadata-only correction](2026-09-09-metadata-only-smoke-closeout.md), which
-uses unauthenticated `tools/list` and cannot invoke an application tool.
+uses only GET discovery metadata and cannot invoke an application tool.
 
 ## Change
 

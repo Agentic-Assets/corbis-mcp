@@ -3,6 +3,10 @@
 Date: 2026-09-09. These are suggestions, not authorization or a parallel queue.
 Code and review proof remain in the repository and its PR.
 
+Historical follow-up record for PR #15. The
+[metadata-only correction](2026-09-09-metadata-only-smoke-closeout.md) supersedes
+the original real-tool probe and owns the current source-smoke scope.
+
 - **P1, acceptance (verified scope gap):** At a separately authorized release,
   run clean-client OAuth acceptance against the exact signed source release.
   This smoke test checks unauthenticated discovery and advertised DCR/PKCE/grants;
