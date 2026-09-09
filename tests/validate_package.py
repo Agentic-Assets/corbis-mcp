@@ -11,8 +11,9 @@ until that material has been supplied, but it does not grant founder approval:
 
 Pass --smoke to perform the intentionally separate, unauthenticated endpoint
 and OAuth metadata probes. The smoke probe uses no tokens, does not start
-OAuth, and requires HTTP 401 for an unauthenticated tools/list request.
-It never invokes a tool, registers a client, or obtains a token.
+OAuth, and sends only GET requests for discovery metadata. It never invokes
+a tool, registers a client, or obtains a token. The application and Marketplace
+own the protected-request HTTP 401 and Bearer challenge checks.
 """
 
 from __future__ import annotations
@@ -370,113 +371,6 @@ def validate_protected_resource_metadata(
     return authorization_servers, scopes
 
 
-def parse_bearer_resource_metadata_challenge(label: str, response: SmokeHttpResponse) -> str:
-    authenticate = response.headers.get("www-authenticate", "")
-    challenges: list[tuple[str, list[str]]] = []
-    for item in _split_authenticate_header(label, authenticate):
-        scheme_match = re.match(
-            r"^([!#$%&'*+.^_`|~0-9A-Za-z-]+)(?:\s+(.+))?$",
-            item,
-        )
-        starts_challenge = bool(
-            scheme_match
-            and (
-                scheme_match.group(2) is None
-                or not scheme_match.group(2).lstrip().startswith("=")
-            )
-        )
-        if starts_challenge:
-            assert scheme_match is not None
-            parameters = [] if scheme_match.group(2) is None else [scheme_match.group(2)]
-            challenges.append((scheme_match.group(1), parameters))
-        elif challenges:
-            challenges[-1][1].append(item)
-        else:
-            raise RuntimeError(f"{label} has a malformed WWW-Authenticate challenge")
-    bearer_challenges = [parameters for scheme, parameters in challenges if scheme.lower() == "bearer"]
-    if len(bearer_challenges) != 1 or not bearer_challenges[0]:
-        raise RuntimeError(f"{label} must include a Bearer WWW-Authenticate challenge")
-    items = bearer_challenges[0]
-    if not items or any("=" not in item for item in items):
-        raise RuntimeError(f"{label} has a malformed Bearer challenge")
-    names = [item.partition("=")[0].strip().lower() for item in items]
-    if any(not re.fullmatch(r"[!#$%&'*+.^_`|~0-9A-Za-z-]+", name) for name in names):
-        raise RuntimeError(f"{label} has a malformed Bearer challenge")
-    if len(set(names)) != len(names):
-        raise RuntimeError(f"{label} has duplicate Bearer challenge parameters")
-    if any(not _valid_auth_parameter_value(item.partition("=")[2].strip()) for item in items):
-        raise RuntimeError(f"{label} has a malformed Bearer challenge")
-    challenge = {}
-    for item in items:
-        key, _, value = item.partition("=")
-        value = value.strip()
-        if value.startswith('"'):
-            value = re.sub(r"\\(.)", r"\1", value[1:-1])
-        challenge[key.strip().lower()] = value
-    metadata_url = _https_url(
-        f"{label} resource_metadata",
-        challenge.get("resource_metadata"),
-        same_origin_as=ENDPOINT,
-    )
-    if metadata_url not in {
-        ROOT_PROTECTED_RESOURCE_METADATA_URL,
-        RFC_PROTECTED_RESOURCE_METADATA_URL,
-    }:
-        raise RuntimeError(f"{label} resource_metadata is not an approved Corbis metadata URL")
-    return metadata_url
-
-
-def _split_authenticate_header(label: str, value: str) -> list[str]:
-    """Split HTTP list members, preserving quoted-pairs for validation."""
-    items: list[str] = []
-    start = 0
-    quoted = False
-    escaped = False
-    for position, character in enumerate(value):
-        if character in "\r\n" or (ord(character) < 32 and character != "\t"):
-            raise RuntimeError(f"{label} has a malformed WWW-Authenticate challenge")
-        if escaped:
-            escaped = False
-        elif quoted and character == "\\":
-            escaped = True
-        elif character == '"':
-            quoted = not quoted
-        elif character == "," and not quoted:
-            if value[start:position].strip():
-                items.append(value[start:position].strip())
-            start = position + 1
-    if quoted or escaped:
-        raise RuntimeError(f"{label} has a malformed WWW-Authenticate challenge")
-    if value[start:].strip():
-        items.append(value[start:].strip())
-    return items
-
-
-def _valid_auth_parameter_value(value: str) -> bool:
-    token_pattern = r"[!#$%&'*+.^_`|~0-9A-Za-z-]+"
-    if re.fullmatch(token_pattern, value):
-        return True
-    if len(value) < 2 or value[0] != '"' or value[-1] != '"':
-        return False
-    position = 1
-    while position < len(value) - 1:
-        character = value[position]
-        codepoint = ord(character)
-        if character == "\\":
-            position += 1
-            if position >= len(value) - 1:
-                return False
-            escaped_codepoint = ord(value[position])
-            if escaped_codepoint != 9 and not (
-                32 <= escaped_codepoint <= 126 or 128 <= escaped_codepoint <= 255
-            ):
-                return False
-        elif character == '"' or (codepoint < 32 and codepoint != 9) or codepoint > 255 or codepoint == 127:
-            return False
-        position += 1
-    return True
-
-
 def authorization_server_metadata_url(issuer: str) -> str:
     _https_url("authorization server issuer", issuer, same_origin_as=ENDPOINT)
     parsed = urlparse(issuer)
@@ -549,48 +443,9 @@ def _fetch_exact(fetcher: SmokeFetcher, label: str, request: Request) -> SmokeHt
 def validate_live_oauth_smoke(fetcher: SmokeFetcher = fetch_smoke_response) -> list[str]:
     observations: list[str] = []
 
-    base_response = _fetch_exact(fetcher, "endpoint", Request(ENDPOINT, method="GET"))
-    base_challenge_url: str | None = None
     advertised_servers: tuple[str, ...] | None = None
-    if base_response.status == 200:
-        advertised_servers, _ = validate_protected_resource_metadata(
-            "endpoint metadata",
-            _json_object("endpoint metadata", base_response),
-        )
-    elif base_response.status == 401:
-        base_challenge_url = parse_bearer_resource_metadata_challenge("endpoint", base_response)
-    else:
-        raise RuntimeError(f"endpoint returned HTTP {base_response.status}; expected 200 or 401")
-    observations.append(f"endpoint: HTTP {base_response.status}")
-
-    tools_list_request = Request(
-        ENDPOINT,
-        data=json.dumps(
-            {
-                "jsonrpc": "2.0",
-                "id": "oauth-smoke",
-                "method": "tools/list",
-            },
-            separators=(",", ":"),
-        ).encode("utf-8"),
-        headers={"Accept": "application/json, text/event-stream", "Content-Type": "application/json"},
-        method="POST",
-    )
-    tools_list_response = _fetch_exact(fetcher, "unauthenticated tools/list", tools_list_request)
-    if tools_list_response.status != 401:
-        raise RuntimeError(
-            f"unauthenticated tools/list returned HTTP {tools_list_response.status}; expected 401"
-        )
-    challenge_url = parse_bearer_resource_metadata_challenge(
-        "unauthenticated tools/list",
-        tools_list_response,
-    )
-    if base_challenge_url is not None and base_challenge_url != challenge_url:
-        raise RuntimeError("Endpoint and tools/list challenges advertise different metadata URLs")
-    observations.append("unauthenticated tools/list: HTTP 401 with Bearer challenge")
-
     metadata_requests = (
-        ("challenged protected-resource metadata", challenge_url),
+        ("endpoint metadata", ENDPOINT),
         ("root protected-resource metadata", ROOT_PROTECTED_RESOURCE_METADATA_URL),
         ("RFC protected-resource metadata", RFC_PROTECTED_RESOURCE_METADATA_URL),
     )
@@ -1324,9 +1179,6 @@ class OAuthSmokeContractTests(unittest.TestCase):
     authorization_metadata_url = (
         "https://www.corbis.ai/.well-known/oauth-authorization-server/api/mcp"
     )
-    custom_challenge_url = (
-        "https://www.corbis.ai/.well-known/oauth-protected-resource/challenge"
-    )
 
     def protected_metadata(self, **overrides: object) -> dict[str, object]:
         payload: dict[str, object] = {
@@ -1367,41 +1219,9 @@ class OAuthSmokeContractTests(unittest.TestCase):
             url=response_url or url,
         )
 
-    def unauthorized(
-        self,
-        url: str,
-        challenge_url: str | None = None,
-        *,
-        authenticate: str | None = None,
-    ) -> SmokeHttpResponse:
-        if authenticate is None:
-            authenticate = (
-                'Bearer error="invalid_request", '
-                f'resource_metadata="{challenge_url or self.custom_challenge_url}"'
-            )
-        return SmokeHttpResponse(
-            status=401,
-            headers={"www-authenticate": authenticate, "content-type": "application/json"},
-            body=b'{}',
-            url=url,
-        )
-
-    def valid_responses(
-        self,
-        *,
-        base_status: int = 200,
-        challenge_url: str | None = None,
-    ) -> dict[tuple[str, str], SmokeHttpResponse]:
-        challenge_url = challenge_url or ROOT_PROTECTED_RESOURCE_METADATA_URL
-        base_response = (
-            self.json_response(ENDPOINT, self.protected_metadata())
-            if base_status == 200
-            else self.unauthorized(ENDPOINT, challenge_url)
-        )
+    def valid_responses(self) -> dict[tuple[str, str], SmokeHttpResponse]:
         return {
-            ("GET", ENDPOINT): base_response,
-            ("POST", ENDPOINT): self.unauthorized(ENDPOINT, challenge_url),
-            ("GET", challenge_url): self.json_response(challenge_url, self.protected_metadata()),
+            ("GET", ENDPOINT): self.json_response(ENDPOINT, self.protected_metadata()),
             ("GET", ROOT_PROTECTED_RESOURCE_METADATA_URL): self.json_response(
                 ROOT_PROTECTED_RESOURCE_METADATA_URL,
                 self.protected_metadata(),
@@ -1421,33 +1241,14 @@ class OAuthSmokeContractTests(unittest.TestCase):
         }
 
     def test_smoke_accepts_base_200_protected_resource_metadata(self) -> None:
-        fetcher = FakeSmokeFetcher(self.valid_responses(base_status=200))
+        fetcher = FakeSmokeFetcher(self.valid_responses())
 
         observations = validate_live_oauth_smoke(fetcher)
 
-        self.assertIn("endpoint: HTTP 200", observations)
+        self.assertIn("endpoint metadata: HTTP 200", observations)
         self.assertIn(
             ("GET", self.authorization_metadata_url),
             [(request.get_method(), request.full_url) for request in fetcher.requests],
-        )
-
-    def test_smoke_accepts_base_401_and_follows_exact_challenge_url(self) -> None:
-        fetcher = FakeSmokeFetcher(
-            self.valid_responses(
-                base_status=401,
-                challenge_url=RFC_PROTECTED_RESOURCE_METADATA_URL,
-            )
-        )
-
-        observations = validate_live_oauth_smoke(fetcher)
-
-        self.assertIn("endpoint: HTTP 401", observations)
-        self.assertEqual(
-            sum(
-                request.full_url == RFC_PROTECTED_RESOURCE_METADATA_URL
-                for request in fetcher.requests
-            ),
-            2,
         )
 
     def test_smoke_rejects_service_info_json_without_exact_resource(self) -> None:
@@ -1492,7 +1293,7 @@ class OAuthSmokeContractTests(unittest.TestCase):
                     validate_live_oauth_smoke(FakeSmokeFetcher(responses))
 
     def test_smoke_rejects_unexpected_base_status(self) -> None:
-        for status in (204, 403, 500):
+        for status in (204, 401, 403, 500):
             with self.subTest(status=status):
                 responses = self.valid_responses()
                 responses[("GET", ENDPOINT)] = SmokeHttpResponse(
@@ -1501,87 +1302,8 @@ class OAuthSmokeContractTests(unittest.TestCase):
                     body=b"",
                     url=ENDPOINT,
                 )
-                with self.assertRaisesRegex(RuntimeError, "expected 200 or 401"):
+                with self.assertRaisesRegex(RuntimeError, "expected 200"):
                     validate_live_oauth_smoke(FakeSmokeFetcher(responses))
-
-    def test_smoke_rejects_missing_or_malformed_base_challenge(self) -> None:
-        invalid_responses = {
-            "missing header": SmokeHttpResponse(401, {}, b"", ENDPOINT),
-            "wrong scheme": self.unauthorized(
-                ENDPOINT,
-                authenticate='Basic realm="corbis"',
-            ),
-            "missing resource metadata": self.unauthorized(
-                ENDPOINT,
-                authenticate='Bearer error="invalid_request"',
-            ),
-            "malformed parameter": self.unauthorized(
-                ENDPOINT,
-                authenticate="Bearer resource_metadata",
-            ),
-            "off-origin metadata": self.unauthorized(
-                ENDPOINT,
-                authenticate='Bearer resource_metadata="https://attacker.example/metadata"',
-            ),
-            "unapproved same-origin metadata": self.unauthorized(
-                ENDPOINT,
-                authenticate=f'Bearer resource_metadata="{self.custom_challenge_url}"',
-            ),
-            "unquoted metadata": self.unauthorized(
-                ENDPOINT,
-                authenticate=(
-                    f"Bearer resource_metadata={ROOT_PROTECTED_RESOURCE_METADATA_URL}"
-                ),
-            ),
-            "duplicate metadata": self.unauthorized(
-                ENDPOINT,
-                authenticate=(
-                    f'Bearer resource_metadata="{ROOT_PROTECTED_RESOURCE_METADATA_URL}", '
-                    f'resource_metadata="{RFC_PROTECTED_RESOURCE_METADATA_URL}"'
-                ),
-            ),
-        }
-        for label, base_response in invalid_responses.items():
-            with self.subTest(label=label):
-                responses = self.valid_responses(base_status=401)
-                responses[("GET", ENDPOINT)] = base_response
-                with self.assertRaises(RuntimeError):
-                    validate_live_oauth_smoke(FakeSmokeFetcher(responses))
-
-    def test_smoke_requires_tools_list_401_with_matching_challenge(self) -> None:
-        cases = {
-            "wrong status": self.json_response(ENDPOINT, {"jsonrpc": "2.0"}),
-            "missing challenge": SmokeHttpResponse(401, {}, b"", ENDPOINT),
-            "different challenge": self.unauthorized(
-                ENDPOINT,
-                RFC_PROTECTED_RESOURCE_METADATA_URL,
-            ),
-            "duplicate bearer challenges": self.unauthorized(
-                ENDPOINT,
-                authenticate=(
-                    f'Bearer resource_metadata="{ROOT_PROTECTED_RESOURCE_METADATA_URL}", '
-                    f'Bearer resource_metadata="{ROOT_PROTECTED_RESOURCE_METADATA_URL}"'
-                ),
-            ),
-        }
-        for label, tools_response in cases.items():
-            with self.subTest(label=label):
-                responses = self.valid_responses(base_status=401)
-                responses[("POST", ENDPOINT)] = tools_response
-                with self.assertRaises(RuntimeError):
-                    validate_live_oauth_smoke(FakeSmokeFetcher(responses))
-
-    def test_smoke_accepts_bearer_among_multiple_authentication_schemes(self) -> None:
-        responses = self.valid_responses()
-        responses[("POST", ENDPOINT)] = self.unauthorized(
-            ENDPOINT,
-            authenticate=(
-                'Basic realm="legacy", Bearer error="invalid_request", '
-                f'resource_metadata="{ROOT_PROTECTED_RESOURCE_METADATA_URL}"'
-            ),
-        )
-
-        validate_live_oauth_smoke(FakeSmokeFetcher(responses))
 
     def test_smoke_rejects_invalid_protected_resource_metadata(self) -> None:
         invalid_documents = {
@@ -1690,38 +1412,34 @@ class OAuthSmokeContractTests(unittest.TestCase):
         with self.assertRaisesRegex(RuntimeError, "redirected away from its exact URL"):
             validate_live_oauth_smoke(FakeSmokeFetcher(responses))
 
-    def test_tools_list_probe_contains_no_credentials_or_tool_invocation(self) -> None:
+    def test_smoke_sends_only_credential_free_get_metadata_requests(self) -> None:
         fetcher = FakeSmokeFetcher(self.valid_responses())
-
         validate_live_oauth_smoke(fetcher)
-
-        post_requests = [request for request in fetcher.requests if request.get_method() == "POST"]
-        self.assertEqual(len(post_requests), 1)
-        tools_request = post_requests[0]
-        headers = {key.lower(): value for key, value in tools_request.header_items()}
-        self.assertNotIn("authorization", headers)
-        self.assertNotIn("cookie", headers)
-        self.assertEqual(headers["content-type"], "application/json")
-        self.assertEqual(headers["accept"], "application/json, text/event-stream")
-        payload = json.loads((tools_request.data or b"").decode("utf-8"))
-        self.assertEqual(payload, {
-            "jsonrpc": "2.0", "id": "oauth-smoke", "method": "tools/list",
+        self.assertEqual(len(fetcher.requests), 5)
+        self.assertEqual({request.full_url for request in fetcher.requests}, {
+            ENDPOINT, ROOT_PROTECTED_RESOURCE_METADATA_URL,
+            RFC_PROTECTED_RESOURCE_METADATA_URL, self.authorization_metadata_url,
+            ROOT_AUTHORIZATION_SERVER_METADATA_URL,
         })
+        for request in fetcher.requests:
+            with self.subTest(url=request.full_url):
+                self.assertEqual(request.get_method(), "GET")
+                self.assertIsNone(request.data)
+                headers = {key.lower(): value for key, value in request.header_items()}
+                self.assertNotIn("authorization", headers)
+                self.assertNotIn("cookie", headers)
 
-    def test_auth_regression_never_causes_a_tool_call_or_authentication_attempt(self) -> None:
+    def test_base_401_fails_without_following_challenges_or_posting(self) -> None:
         responses = self.valid_responses()
-        responses[("POST", ENDPOINT)] = self.json_response(
-            ENDPOINT, {"jsonrpc": "2.0", "id": "oauth-smoke", "result": {"tools": []}}
+        responses[("GET", ENDPOINT)] = SmokeHttpResponse(
+            401, {"www-authenticate": 'Bearer resource_metadata="https://evil.example/"'},
+            b"", ENDPOINT,
         )
         fetcher = FakeSmokeFetcher(responses)
-        with self.assertRaisesRegex(RuntimeError, "tools/list returned HTTP 200; expected 401"):
+        with self.assertRaisesRegex(RuntimeError, "endpoint metadata returned HTTP 401"):
             validate_live_oauth_smoke(fetcher)
-        self.assertEqual(len(fetcher.requests), 2)
+        self.assertEqual(len(fetcher.requests), 1)
         self.assertEqual(fetcher.requests[0].get_method(), "GET")
-        self.assertEqual(json.loads(fetcher.requests[1].data), {
-            "jsonrpc": "2.0", "id": "oauth-smoke", "method": "tools/list",
-        })
-        self.assertTrue(all(request.full_url == ENDPOINT for request in fetcher.requests))
 
     def test_live_smoke_opener_ignores_environment_proxy_credentials(self) -> None:
         proxy_handlers = [
@@ -1729,50 +1447,6 @@ class OAuthSmokeContractTests(unittest.TestCase):
         ]
         self.assertEqual(proxy_handlers, [])
 
-
-    def test_quoted_challenge_values_preserve_and_decode_escapes_once(self) -> None:
-        metadata = ROOT_PROTECTED_RESOURCE_METADATA_URL
-        valid = [
-            f'Bearer realm="a,b", resource_metadata="{metadata}"',
-            'Bearer realm="a\\"b", resource_metadata="' + metadata + '"',
-            'Bearer realm="a\\\\b", resource_metadata="' + metadata + '"',
-            'Bearer realm="a\\,b", resource_metadata="' + metadata + '"',
-            'Bearer realm="caf\\\xe9", resource_metadata="' + metadata + '"',
-            f'Bearer realm="a\tb", resource_metadata="{metadata}"',
-            f'Bearer resource_metadata = "{metadata}"',
-            f'Bearer RESOURCE_METADATA="{metadata}"',
-            'Bearer resource_metadata="' + metadata.replace('/', '\\/') + '"',
-            f'Basic realm="a, b", bEaReR resource_metadata="{metadata}", Digest realm="next"',
-            f', Bearer resource_metadata="{metadata}", ,',
-        ]
-        for header in valid:
-            with self.subTest(header=header):
-                self.assertEqual(
-                    parse_bearer_resource_metadata_challenge(
-                        "test", self.unauthorized(ENDPOINT, authenticate=header)
-                    ), metadata,
-                )
-
-    def test_malformed_quoted_challenges_fail_closed(self) -> None:
-        metadata = ROOT_PROTECTED_RESOURCE_METADATA_URL
-        invalid = [
-            f'Bearer resource_metadata="{metadata}',
-            f'Bearer resource_metadata="{metadata}\\',
-            f'Bearer realm="unescaped"quote", resource_metadata="{metadata}"',
-            f'Bearer realm="bad\r\nvalue", resource_metadata="{metadata}"',
-            f'Bearer realm="bad\x00value", resource_metadata="{metadata}"',
-            f'Bearer realm="bad\x7fvalue", resource_metadata="{metadata}"',
-            f'Bearer realm="bad\\\x01value", resource_metadata="{metadata}"',
-            f'Bearer resource_metadata="{metadata}"extra',
-            f'Bearer resource_metadata="{metadata}", RESOURCE_METADATA="{metadata}"',
-            f'Bearer resource_metadata="{metadata}", Bearer',
-            f'Bearer resource_metadata="{metadata}\\\\"',
-        ]
-        for header in invalid:
-            with self.subTest(header=header), self.assertRaises(RuntimeError):
-                parse_bearer_resource_metadata_challenge(
-                    "test", self.unauthorized(ENDPOINT, authenticate=header)
-                )
 
     def test_both_authorization_aliases_are_checked(self) -> None:
         fetcher = FakeSmokeFetcher(self.valid_responses())
@@ -1954,25 +1628,6 @@ class OAuthSmokeContractTests(unittest.TestCase):
                 ))
                 handler.parent.open.assert_not_called()
 
-    def test_repeated_header_fields_preserve_all_bearer_challenges(self) -> None:
-        from email.message import Message
-        headers = Message()
-        headers["WWW-Authenticate"] = 'Basic realm="legacy"'
-        headers["WWW-Authenticate"] = (
-            f'Bearer resource_metadata="{ROOT_PROTECTED_RESOURCE_METADATA_URL}"'
-        )
-        normalized = _normalized_headers(headers)
-        response = SmokeHttpResponse(401, normalized, b"", ENDPOINT)
-        self.assertEqual(parse_bearer_resource_metadata_challenge("test", response),
-                         ROOT_PROTECTED_RESOURCE_METADATA_URL)
-        headers["WWW-Authenticate"] = 'Bearer error="invalid_request"'
-        with self.assertRaises(RuntimeError):
-            parse_bearer_resource_metadata_challenge("test", SmokeHttpResponse(
-                401, _normalized_headers(headers), b"", ENDPOINT
-            ))
-
-
-
 def run_smoke_probe() -> None:
     checked_at = datetime.now(UTC).isoformat()
     print(f"Live smoke probe started at {checked_at}")
@@ -1980,8 +1635,9 @@ def run_smoke_probe() -> None:
         print(observation)
     print(
         "Live smoke probe passed. It sent no credentials, did not start OAuth, "
-        "and tools/list returned HTTP 401 with discovery metadata. No tool was invoked. "
-        "This does not prove authenticated OAuth or client acceptance."
+        "and made only GET metadata requests. No tool was invoked. "
+        "It does not check protected-request 401 challenges, authenticated OAuth, "
+        "or client acceptance."
     )
 
 
