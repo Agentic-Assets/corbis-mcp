@@ -69,10 +69,9 @@ excluded. Regression tests now cover those boundaries explicitly.
 ## State and separate gates
 
 Implementation and local proof are complete. The PR carries current GitHub gate
-and review intake evidence. Founder merge authorization was verified in the
-source task: the exact approval phrase and the 2026-09-09 instruction to merge
-these OAuth fixes across affected repositories. Merge remains conditional on
-the final GitHub checks; the PR records the resulting merge state.
+and review intake evidence. The coordinating task owns the merge decision and
+execution under its applicable instructions. This task performs verification
+and worktree cleanup; the PR records the resulting merge state.
 
 Source-package tests and live unauthenticated readback passed. No authenticated
 OAuth flow, direct-client acceptance, source release, Marketplace promotion or
