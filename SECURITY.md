@@ -6,6 +6,6 @@ Send a concise private report to [security@agenticassets.ai](mailto:security@age
 with the affected version or commit, reproduction steps, and potential impact.
 Do not include credentials, tokens, client data, or other sensitive material.
 
-This repository contains connector metadata only. Corbis service, OAuth, and
-authorization vulnerabilities belong to the production service owner and are
-handled through this private intake.
+This repository contains a connector manifest and skill instructions only.
+Corbis service, OAuth, and authorization vulnerabilities belong to the
+production service owner and are handled through this private intake.

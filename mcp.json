@@ -1,7 +1,0 @@
-{
-  "mcpServers": {
-    "corbis-mcp": {
-      "url": "https://www.corbis.ai/api/mcp/universal"
-    }
-  }
-}
