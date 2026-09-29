@@ -1,13 +1,25 @@
 {
   "name": "corbis",
-  "version": "0.1.6",
-  "description": "Connect compatible MCP clients to Corbis through the production remote endpoint. Tool availability depends on the authenticated account and service authorization.",
+  "displayName": "Corbis",
+  "version": "0.2.0",
+  "description": "Source-grounded research in finance, real estate, and economics: cited literature reviews, claim checks, BibTeX verification, and referee-style paper reviews through the Corbis research connector.",
   "author": {
     "name": "Agentic Assets"
   },
   "homepage": "https://www.corbis.ai",
   "repository": "https://github.com/Agentic-Assets/corbis-mcp",
   "license": "MIT",
-  "logo": "./assets/icon.png",
-  "mcpServers": "./mcp.json"
+  "keywords": [
+    "research",
+    "finance",
+    "real-estate",
+    "economics",
+    "literature-review",
+    "citations",
+    "bibtex",
+    "peer-review"
+  ],
+  "skills": "./skills/",
+  "mcpServers": "./.mcp.json",
+  "logo": "assets/icon.png"
 }

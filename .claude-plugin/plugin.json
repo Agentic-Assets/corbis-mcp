@@ -1,19 +1,27 @@
 {
-  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
   "name": "corbis",
   "displayName": "Corbis",
-  "version": "0.1.6",
-  "description": "Connect compatible MCP clients to Corbis through the production remote endpoint. Tool availability depends on the authenticated account and service authorization.",
+  "version": "0.2.0",
+  "description": "Source-grounded research in finance, real estate, and economics: cited literature reviews, claim checks, BibTeX verification, and referee-style paper reviews through the Corbis research connector.",
   "author": {
-    "name": "Agentic Assets"
+    "name": "Agentic Assets",
+    "url": "https://www.corbis.ai"
   },
   "homepage": "https://www.corbis.ai",
   "repository": "https://github.com/Agentic-Assets/corbis-mcp",
-  "mcpServers": {
-    "corbis-mcp": {
-      "type": "http",
-      "url": "https://www.corbis.ai/api/mcp/universal"
-    }
-  },
-  "defaultEnabled": false
+  "license": "MIT",
+  "privacyPolicyUrl": "https://www.corbis.ai/privacy",
+  "termsOfServiceUrl": "https://www.corbis.ai/terms",
+  "documentationUrl": "https://www.corbis.ai/docs/mcp-guide",
+  "supportUrl": "https://www.corbis.ai/contact",
+  "keywords": [
+    "research",
+    "finance",
+    "real-estate",
+    "economics",
+    "literature-review",
+    "citations",
+    "bibtex",
+    "peer-review"
+  ]
 }

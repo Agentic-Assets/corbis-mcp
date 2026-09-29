@@ -1,11 +1,12 @@
 # Support
 
-For help with Corbis or this connector package, contact
+For help with Corbis or this plugin, contact
 [corbis@agenticassets.ai](mailto:corbis@agenticassets.ai).
 
-Include the client, package version or commit, a concise issue description, and
-non-sensitive reproduction steps. Do not send credentials, tokens, or client
-data.
+Include the client (Claude, Codex, or Cursor), plugin version or commit, a
+concise issue description, and non-sensitive reproduction steps. Do not send
+credentials, tokens, or client data.
 
-This package supplies remote-MCP configuration only. Account access, tools,
-OAuth, and service behavior remain controlled by Corbis.
+This plugin supplies connector configuration and skill instructions only.
+Account access, tools, OAuth, and service behavior remain controlled by
+Corbis.
