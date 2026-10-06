@@ -2,6 +2,14 @@
 
 All notable changes to this plugin are documented here.
 
+## 0.3.0 - 2026-10-02
+
+- Added a portable OpenAI plugin manifest and Streamable HTTP connection descriptor alongside the existing client manifests.
+- Added onboarding that guides account connection, source inspection, and workflow selection.
+- Added metadata for a hosted Corbis research workspace with sidebar and conversation entrypoints and paper mentions on compatible hosts.
+- Kept research authorization and account permissions in the Corbis connector. Workspace preferences apply to the current session.
+- Clarified host support, source inspection, and the distinction between a direct MCP connection and an installed plugin.
+
 ## 0.2.0 - 2026-09-29
 
 - Added three skills (`literature-review`, `citations`, `paper-review`) that turn the

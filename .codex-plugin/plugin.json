@@ -1,6 +1,6 @@
 {
   "name": "corbis",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Source-grounded research in finance, real estate, and economics: cited literature reviews, claim checks, BibTeX verification, and referee-style paper reviews through the Corbis research connector.",
   "author": {
     "name": "Agentic Assets"
@@ -22,15 +22,16 @@
   "mcpServers": "./.mcp.json",
   "interface": {
     "displayName": "Corbis",
-    "shortDescription": "Connect to Corbis for cited finance, real estate, and economics research.",
+    "shortDescription": "Research with citations",
     "longDescription": "Source-grounded research in finance, real estate, and economics through the Corbis research connector, with skills for cited literature reviews, citation verification, and referee-style paper reviews.",
     "developerName": "Agentic Assets",
-    "category": "Research",
+    "category": "Education & Research",
     "capabilities": [
       "Interactive",
       "Read"
     ],
     "websiteURL": "https://www.corbis.ai",
+    "supportURL": "https://www.corbis.ai/contact",
     "privacyPolicyURL": "https://www.corbis.ai/privacy",
     "termsOfServiceURL": "https://www.corbis.ai/terms",
     "composerIcon": "./assets/icon.png",
