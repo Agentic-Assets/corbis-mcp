@@ -1,7 +1,7 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "corbis",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Source-grounded research in finance, real estate, and economics: cited literature reviews, claim checks, BibTeX verification, and referee-style paper reviews through the Corbis research connector.",
   "author": {
     "name": "Agentic Assets"
@@ -23,8 +23,8 @@
     "com.openai": {
       "interface": {
         "displayName": "Corbis",
-        "shortDescription": "Research with citations",
-        "longDescription": "Source-grounded research in finance, real estate, and economics through the Corbis research connector, with skills for cited literature reviews, citation verification, and referee-style paper reviews.",
+        "shortDescription": "Finance & real estate research",
+        "longDescription": "Turn a research question into an evidence trail you can inspect. Corbis connects academic researchers and industry analysts to research in finance, real estate and economics. Find papers, build cited literature reviews, assess research questions, and audit or export BibTeX references. Compare commercial real estate markets and economic indicators with source dates, units and coverage. Guided skills also support referee-style feedback on a manuscript you provide. Connect your Corbis account, ask a question, then inspect the returned sources before using the result. Coverage and evidence depth vary; search metadata and abstracts do not establish full-text support.",
         "developerName": "Agentic Assets",
         "category": "Education & Research",
         "capabilities": [
@@ -38,12 +38,70 @@
         "composerIcon": "./assets/icon.png",
         "logo": "./assets/icon.png",
         "defaultPrompt": [
-          "Find recent peer-reviewed research on cap rate spreads and cite the sources.",
-          "Verify the references in this BibTeX file.",
-          "Give me referee-style feedback on this draft paper."
+          "Write a full housing-supply literature review using up to 20 relevant papers, with source links and a testable question.",
+          "Compare Austin and Dallas multifamily markets using job growth, migration, affordability and dated cap-rate evidence.",
+          "Audit the attached paper’s references and in-text citations, explain corrections, and export a verified bibliography."
         ]
       },
-      "onboardingSkill": "./skills/onboarding/SKILL.md"
+      "onboardingSkill": "./skills/onboarding/SKILL.md",
+      "review": {
+        "test_cases": {
+          "positive": [
+            {
+              "description": "Full academic literature review and research pitch using up to 20 relevant distinct papers, with mechanisms, candidate tensions, evidence limits and a testable proposed question.",
+              "prompt": "Write a full, source-linked literature review and research pitch on how housing supply constraints affect monetary policy transmission to house prices, covering literature through 2024. Use up to 20 relevant, distinct papers without padding. Compare mechanisms, methods, findings and credible disagreements. Include an evidence table, references and one testable research question with its identification challenge. Distinguish a candidate gap from established novelty.",
+              "tools_triggered": "research_opportunity_map; literature_retrieve; get_paper_details_batch; render_citations",
+              "expected_behavior": "Retrieve 2 queries x10 candidates; map 20; batch<=20 retained IDs; render returned citations. Deliver a source-linked mechanisms/methods/findings table and testable pitch. Report counts, duplicates and missing abstracts. No padding, forced contradiction, proven novelty or full-text claim."
+            },
+            {
+              "description": "Attach corbis-reference-audit-sample.pdf and its .bib companion. Audit all 21 entries and in-text citations; preserve originals and separate substantive errors from formatting differences.",
+              "prompt": "Audit the attached research paper's references and in-text citations before I circulate it. Check the entire bibliography for incorrect or unresolved references, duplicates, and mismatches between citations and the reference list. Give me a prioritized correction report, corrected BibTeX and readable references. Keep the originals visible, distinguish factual errors from formatting differences, and preserve anything you cannot verify.",
+              "tools_triggered": "verify_bibtex; render_citations; search_papers/get_paper_details as needed",
+              "expected_behavior": "Host reads attachments/checks citations; verify all 21 entries (maxEntries=21). Correct year/journal; identify duplicate, missing and uncited citations. Interpret case/escape/diacritic flags. Preserve unresolved items; export matched IDs as BibTeX/Markdown. Report counts, provenance and errors.",
+              "file_attachment_urls": [
+                "https://www.corbis.ai/.well-known/mcp-review/corbis-reference-audit-sample.pdf",
+                "https://www.corbis.ai/.well-known/mcp-review/corbis-reference-audit-sample.bib"
+              ]
+            },
+            {
+              "description": "Compare Austin and Dallas multifamily demand and pricing evidence in a concise diligence brief, preserving dates, samples and distinct economic, transaction, asking and survey concepts.",
+              "prompt": "Prepare a one-page multifamily market diligence brief comparing Austin, Texas, with Dallas, Texas. Show job growth, net migration and rent affordability side by side, then explain what the available cap-rate evidence and Treasury-rate context do and do not tell us. Identify the three most useful follow-up diligence questions. Quote dates and sample sizes, keep survey expectations separate from transaction and asking evidence, and do not turn this into a property valuation.",
+              "tools_triggered": "get_metric_definitions; compare_markets; get_cre_market; get_national_macro; get_data_freshness",
+              "expected_behavior": "Resolve Austin/Dallas CBSAs; compare defined jobs/migration/affordability metrics; inspect multifamily snapshots and latest DGS10. Brief includes units, observation dates, samples and gaps. Distinguish pooled CMBS/listings, CMBS-only, CBRE survey and national REIT evidence; no valuation."
+            },
+            {
+              "description": "Explain the 2020-2024 rate and inflation cycle using real observations, transparent monthly alignment, reproducible CPI growth and a clear chart or table.",
+              "prompt": "Help me explain the 2020-2024 interest-rate cycle to an investment committee. Put the effective federal funds rate, the 30-year mortgage rate and year-over-year CPI inflation in a clear monthly chart or table. Explain the sequence in a few sentences, show the source and date coverage, and separate observed history from any claim about what will happen next.",
+              "tools_triggered": "get_national_macro; get_data_freshness; fred_search only if series units/frequency need confirmation",
+              "expected_behavior": "Fetch FEDFUNDS and MORTGAGE30US for 2020-2024, CPIAUCSL for 2019-2024 (limit 500 each). Show monthly chart/table with units, source dates and gaps. CPI YoY=100*(CPI(t)/CPI(t-12)-1); state weekly-to-monthly mortgage aggregation. Use actual observations; no forecast or causal certainty."
+            },
+            {
+              "description": "Assess whether Austin permits and rent data can support an empirical study, connect relevant research, and show a reproducible join plan and identification limits.",
+              "prompt": "Could I study whether Austin's construction wave preceded rent moderation? Assess feasibility using 2019-2024 data and up to 20 relevant papers, then sketch a compact empirical design using the strongest sources. Show available permits and rent measures, how to align them, extra data or comparison markets needed, and the main causal-identification threat. Distinguish abstract-level leads from full-text review and a proposed study from an established result.",
+              "tools_triggered": "literature_retrieve; get_market_data; get_market_trends; search_datasets; render_citations for retained literature references",
+              "expected_behavior": "Retrieve 2x10 papers without padding. Resolve Austin CBSA; fetch 2019-2024 housing/building_permits and zillow/zori; assess dataset matches. Report coverage/grain and join on YYYY-MM. Distinguish permits from completions; label abstract limits and proposed identification, not causality."
+            }
+          ],
+          "negative": [
+            {
+              "description": "Securities execution is unsupported. Explain that Corbis cannot buy shares or confirm orders; invoke no Corbis tool for this action-only request and never claim a purchase.",
+              "prompt": "Use Corbis to buy 100 shares of SPY in my brokerage account right now and confirm the filled order. Do not research the investment."
+            },
+            {
+              "description": "External email and journal submission are unsupported. Explain that limit; invoke no Corbis tool for this send-only request and never claim a message or submission was sent.",
+              "prompt": "Email my manuscript to the editor of the Journal of Finance and submit it on my behalf. Do not review the paper or search for literature; just send it."
+            },
+            {
+              "description": "Academic source-corpus edits are unsupported. Explain that Corbis cannot overwrite authorship; invoke no Corbis tool for this mutation-only request and never claim a record changed.",
+              "prompt": "Change the author of Markowitz's Portfolio Selection in the Corbis research index to my name and save that change permanently. Do not look it up; just update the source record."
+            }
+          ]
+        }
+      },
+      "publication": {
+        "release_notes": "Version 0.3.1 adds OpenAI listing copy and conversation starters for research, market comparison and reference audits; five positive and three negative review cases; public synthetic reference-audit fixtures; and all-supported-countries targeting. The portable package retains the shared research skills and Corbis MCP connection. Host support and account permissions determine available behavior.",
+        "countries": []
+      }
     }
   }
 }
