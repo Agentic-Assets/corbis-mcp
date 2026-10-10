@@ -1,6 +1,6 @@
 {
   "name": "corbis",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Source-grounded research in finance, real estate, and economics: cited literature reviews, claim checks, BibTeX verification, and referee-style paper reviews through the Corbis research connector.",
   "author": {
     "name": "Agentic Assets"
@@ -22,8 +22,8 @@
   "mcpServers": "./.mcp.json",
   "interface": {
     "displayName": "Corbis",
-    "shortDescription": "Research with citations",
-    "longDescription": "Source-grounded research in finance, real estate, and economics through the Corbis research connector, with skills for cited literature reviews, citation verification, and referee-style paper reviews.",
+    "shortDescription": "Finance & real estate research",
+    "longDescription": "Turn a research question into an evidence trail you can inspect. Corbis connects academic researchers and industry analysts to research in finance, real estate and economics. Find papers, build cited literature reviews, assess research questions, and audit or export BibTeX references. Compare commercial real estate markets and economic indicators with source dates, units and coverage. Guided skills also support referee-style feedback on a manuscript you provide. Connect your Corbis account, ask a question, then inspect the returned sources before using the result. Coverage and evidence depth vary; search metadata and abstracts do not establish full-text support.",
     "developerName": "Agentic Assets",
     "category": "Education & Research",
     "capabilities": [
@@ -37,9 +37,9 @@
     "composerIcon": "./assets/icon.png",
     "logo": "./assets/icon.png",
     "defaultPrompt": [
-      "Find recent peer-reviewed research on cap rate spreads and cite the sources.",
-      "Verify the references in this BibTeX file.",
-      "Give me referee-style feedback on this draft paper."
+      "Write a full housing-supply literature review using up to 20 relevant papers, with source links and a testable question.",
+      "Compare Austin and Dallas multifamily markets using job growth, migration, affordability and dated cap-rate evidence.",
+      "Audit the attached paper’s references and in-text citations, explain corrections, and export a verified bibliography."
     ]
   }
 }

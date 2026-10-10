@@ -6,6 +6,12 @@ All notable changes to this plugin are documented here.
 
 - Added a 512 px PNG of the Corbis mark for directory listings and replaced the 48 px Codex and Cursor icon with it.
 
+## 0.3.1
+
+- Add OpenAI listing copy, conversation starters, review cases and release notes, with all-supported-countries targeting.
+- Link the synthetic reference-audit PDF and BibTeX fixtures used by the review case.
+- Keep the Codex interface aligned and raise compatible host manifest versions together.
+
 ## 0.3.0 - 2026-10-02
 
 - Added a portable OpenAI plugin manifest and Streamable HTTP connection descriptor alongside the existing client manifests.
