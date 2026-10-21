@@ -1,7 +1,6 @@
 # Support
 
-For help with Corbis or this plugin, contact
-[corbis@agenticassets.ai](mailto:corbis@agenticassets.ai).
+For help with Corbis or this plugin, [contact Corbis](https://corbis.ai/contact).
 
 Include the client (Claude, Codex, or Cursor), plugin version or commit, a
 concise issue description, and non-sensitive reproduction steps. Do not send

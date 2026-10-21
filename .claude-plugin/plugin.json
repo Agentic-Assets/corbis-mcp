@@ -1,8 +1,8 @@
 {
   "name": "corbis",
   "displayName": "Corbis",
-  "version": "0.3.1",
-  "description": "Source-grounded research in finance, real estate, and economics: cited literature reviews, claim checks, BibTeX verification, and referee-style paper reviews through the Corbis research connector.",
+  "version": "0.4.0",
+  "description": "Source-grounded research in finance, real estate, and economics: cited real estate investment and portfolio allocation briefs, literature reviews, citation checks, and referee-style paper reviews through the Corbis research connector.",
   "author": {
     "name": "Agentic Assets",
     "url": "https://www.corbis.ai"

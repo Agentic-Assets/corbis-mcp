@@ -6,6 +6,15 @@ All notable changes to this plugin are documented here.
 
 - Added a 512 px PNG of the Corbis mark for directory listings and replaced the 48 px Codex and Cursor icon with it.
 
+## 0.4.0
+
+- Add real-estate-investment-brief and investment-allocation-brief for cited practitioner decision briefs, with domain-specific evidence checks and conditional investment implications.
+- Add realistic evaluation cases for investment-style comparisons, geographic diversification, illiquid allocations, and factor strategies.
+
+## 0.3.2
+
+- Route public support through the canonical Corbis contact page and raise all four manifest versions together.
+
 ## 0.3.1
 
 - Add OpenAI listing copy, conversation starters, review cases and release notes, with all-supported-countries targeting.
