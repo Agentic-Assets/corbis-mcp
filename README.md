@@ -5,11 +5,15 @@ Corbis is a research workspace for finance, real estate, and economics from Agen
 ## Skills
 
 - **onboarding** (`/corbis:onboarding` where the host exposes skill commands): connect Corbis, inspect a first paper, and choose a research workflow.
+- **real-estate-investment-brief** (`/corbis:real-estate-investment-brief`): translate research into a CRE investment decision brief, including core versus noncore, sector and geographic diversification, and listed versus private property exposure.
+- **investment-allocation-brief** (`/corbis:investment-allocation-brief`): compare cross-asset allocation and implementation choices, including private assets, active versus passive management, factor exposures, and liquidity tradeoffs.
 - **literature-review** (`/corbis:literature-review`): cited literature reviews, "what does research say about" questions, claim checks against published papers, and positioning a paper against related work.
 - **citations** (`/corbis:citations`): verify and correct BibTeX, flag references that cannot be matched, format citations in APA, MLA, Chicago, or Harvard style, and export BibTeX, Markdown, or JSON.
 - **paper-review** (`/corbis:paper-review`): referee-style reports and technical audits of a manuscript you provide, with literature positioning and missing-reference checks.
 
-Narrow questions get a quick answer that uses at most five Corbis tool calls, followed by an offer to run the full workflow. Ask for a full review, report, or audit to run the complete procedure.
+Use the investment briefs for practitioner decisions: state investor constraints, distinguish source findings from interpretation, and identify diligence questions. Keep a CRE strategy comparison in real-estate-investment-brief; use investment-allocation-brief when the decision spans the broader portfolio. Use literature-review for an academic synthesis and paper-review for a supplied manuscript. The briefs provide research and conditional scenarios; they do not optimize portfolios, forecast returns, or execute trades.
+
+Narrow questions get a quick answer that uses at most five Corbis tool calls, followed by an offer to run the full workflow. Ask for a full brief, memo, review, report, or audit to run the complete procedure.
 
 ## Connect
 
@@ -44,10 +48,10 @@ Corbis is strongest in finance, real estate, economics, and adjacent business re
 
 ## Support and license
 
-Support: corbis@agenticassets.ai. To report a security issue privately, follow [SECURITY.md](SECURITY.md).
+Support: see [SUPPORT.md](SUPPORT.md). To report a security issue privately, follow [SECURITY.md](SECURITY.md).
 
 The plugin files in this repository are MIT licensed. The Corbis service is proprietary and governed by its terms: https://www.corbis.ai/terms
 
 ## Source
 
-Agentic Assets publishes this repository from its internal source, and each release replaces its contents. To report a problem or suggest a change, open an issue here or email corbis@agenticassets.ai; changes are made in the source and arrive in the next release.
+Agentic Assets publishes this repository from its internal source, and each release replaces its contents. To report a problem or suggest a change, open an issue here or [contact Corbis](https://corbis.ai/contact); changes are made in the source and arrive in the next release.

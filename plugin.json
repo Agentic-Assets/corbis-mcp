@@ -1,8 +1,8 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "corbis",
-  "version": "0.3.1",
-  "description": "Source-grounded research in finance, real estate, and economics: cited literature reviews, claim checks, BibTeX verification, and referee-style paper reviews through the Corbis research connector.",
+  "version": "0.4.0",
+  "description": "Source-grounded research in finance, real estate, and economics: cited real estate investment and portfolio allocation briefs, literature reviews, citation checks, and referee-style paper reviews through the Corbis research connector.",
   "author": {
     "name": "Agentic Assets"
   },
@@ -99,7 +99,7 @@
         }
       },
       "publication": {
-        "release_notes": "Version 0.3.1 adds OpenAI listing copy and conversation starters for research, market comparison and reference audits; five positive and three negative review cases; public synthetic reference-audit fixtures; and all-supported-countries targeting. The portable package retains the shared research skills and Corbis MCP connection. Host support and account permissions determine available behavior.",
+        "release_notes": "Version 0.4.0 adds real estate investment and portfolio allocation briefs for industry professionals, with cited evidence, investor constraints, implementation tradeoffs and diligence questions. The package retains literature reviews, citation checks, paper reviews and the Corbis MCP connection. Host support and account permissions determine available behavior.",
         "countries": []
       }
     }
