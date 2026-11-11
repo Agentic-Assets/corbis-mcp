@@ -1,0 +1,21 @@
+{
+  "$schema": "https://skills.sh/schemas/skills.sh.schema.json",
+  "notGrouped": "bottom",
+  "groupings": [
+    {
+      "title": "Research",
+      "description": "Review literature and manuscripts and verify citations.",
+      "skills": ["literature-review", "paper-review", "citations"]
+    },
+    {
+      "title": "Investment",
+      "description": "Use research to inform real estate and portfolio allocation decisions.",
+      "skills": ["real-estate-investment-brief", "investment-allocation-brief"]
+    },
+    {
+      "title": "Getting started",
+      "description": "Connect Corbis and choose a research workflow.",
+      "skills": ["onboarding"]
+    }
+  ]
+}

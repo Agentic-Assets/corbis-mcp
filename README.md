@@ -1,15 +1,27 @@
 # Corbis plugin
 
+[![skills.sh](https://skills.sh/b/agentic-assets/corbis-mcp)](https://skills.sh/agentic-assets/corbis-mcp)
+
 Corbis is a research workspace for finance, real estate, and economics from Agentic Assets. This plugin connects a compatible AI workspace to the Corbis research connector and adds skills that turn Corbis tools into cited research workflows. Where the host exposes Corbis app entrypoints, you can also open a research workspace, search papers, inspect sources, and export citations. Surface availability depends on the host and account. The skills instruct the model to cite only papers and data that Corbis returns in the conversation or that you supply, so each claim can be traced to a source.
 
 ## Skills
 
-- **onboarding** (`/corbis:onboarding` where the host exposes skill commands): connect Corbis, inspect a first paper, and choose a research workflow.
-- **real-estate-investment-brief** (`/corbis:real-estate-investment-brief`): translate research into a CRE investment decision brief, including core versus noncore, sector and geographic diversification, and listed versus private property exposure.
-- **investment-allocation-brief** (`/corbis:investment-allocation-brief`): compare cross-asset allocation and implementation choices, including private assets, active versus passive management, factor exposures, and liquidity tradeoffs.
-- **literature-review** (`/corbis:literature-review`): cited literature reviews, "what does research say about" questions, claim checks against published papers, and positioning a paper against related work.
-- **citations** (`/corbis:citations`): verify and correct BibTeX, flag references that cannot be matched, format citations in APA, MLA, Chicago, or Harvard style, and export BibTeX, Markdown, or JSON.
-- **paper-review** (`/corbis:paper-review`): referee-style reports and technical audits of a manuscript you provide, with literature positioning and missing-reference checks.
+Install the skills for a supported coding agent with the [Skills CLI](https://skills.sh/):
+
+```bash
+npx skills add Agentic-Assets/corbis-mcp
+```
+
+The command installs skill instructions; it does not configure the Corbis connector. Connect and sign in separately as described in [Connect](#connect). Corbis tool calls use credits; see [plans and pricing](https://www.corbis.ai/pricing).
+
+Browse the [Corbis collection](https://skills.sh/agentic-assets/corbis-mcp) or an individual skill on skills.sh:
+
+- [onboarding](https://skills.sh/agentic-assets/corbis-mcp/onboarding) (`/corbis:onboarding` where the host exposes skill commands): connect Corbis, inspect a first paper, and choose a research workflow.
+- [real-estate-investment-brief](https://skills.sh/agentic-assets/corbis-mcp/real-estate-investment-brief) (`/corbis:real-estate-investment-brief`): translate research into a CRE investment decision brief, including core versus noncore, sector and geographic diversification, and listed versus private property exposure.
+- [investment-allocation-brief](https://skills.sh/agentic-assets/corbis-mcp/investment-allocation-brief) (`/corbis:investment-allocation-brief`): compare cross-asset allocation and implementation choices, including private assets, active versus passive management, factor exposures, and liquidity tradeoffs.
+- [literature-review](https://skills.sh/agentic-assets/corbis-mcp/literature-review) (`/corbis:literature-review`): cited literature reviews, "what does research say about" questions, claim checks against published papers, and positioning a paper against related work.
+- [citations](https://skills.sh/agentic-assets/corbis-mcp/citations) (`/corbis:citations`): verify and correct BibTeX, flag references that cannot be matched, format citations in APA, MLA, Chicago, or Harvard style, and export BibTeX, Markdown, or JSON.
+- [paper-review](https://skills.sh/agentic-assets/corbis-mcp/paper-review) (`/corbis:paper-review`): referee-style reports and technical audits of a manuscript you provide, with literature positioning and missing-reference checks. It can also verify a report you already wrote against the manuscript and tighten it without rewriting.
 
 Use the investment briefs for practitioner decisions: state investor constraints, distinguish source findings from interpretation, and identify diligence questions. Keep a CRE strategy comparison in real-estate-investment-brief; use investment-allocation-brief when the decision spans the broader portfolio. Use literature-review for an academic synthesis and paper-review for a supplied manuscript. The briefs provide research and conditional scenarios; they do not optimize portfolios, forecast returns, or execute trades.
 

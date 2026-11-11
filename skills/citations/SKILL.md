@@ -9,12 +9,13 @@ Check references against the Corbis paper index and format them without adding a
 
 ## Ground rules
 
-- Cite only papers, data, and quotes that a Corbis tool returned in this conversation or that the user supplied. Never invent a DOI, author, year, title, or quote.
+- Cite only papers, data, and quotes that a Corbis tool returned in this conversation, that the user supplied, or that you confirmed with the registry check below. Never invent a DOI, author, year, title, or quote.
 - Say when evidence is thin, old, mixed, or limited to one market or domain. Never describe the output as free of errors or hallucinations.
-- Some optional steps use premium tools that need an enterprise plan. If a premium tool is not in your tool list, or returns an access or plan error, tell the user once that the step needs an enterprise plan (current plans: https://www.corbis.ai/pricing), then continue with the standard tools. Never retry a denied tool.
+- Some optional steps use premium tools that need an enterprise plan. If a premium tool is not in your tool list, or returns an access or plan error, tell the user once that the step needs an enterprise plan (current plans: the Corbis pricing page), then continue with the standard tools. Never retry a denied tool.
 - Research tool calls may use Corbis credits. Use a batch tool when one exists, and never re-fetch details for a paper already retrieved in this conversation.
 - Quick mode is the default for a narrow question: at most 5 Corbis tool calls, a short cited answer, then an offer to run the full workflow. Use full mode when the user asks for a review, report, or audit, or accepts that offer.
-- If no Corbis tools are available, or a Corbis call returns a sign-in or connection error, first retry the call once through any other Corbis connection in your tool list (the same tool name from another Corbis server). That retry counts toward the quick-mode limit, so skip it when no calls remain. If none works, ask the user to connect or reconnect Corbis (the plugin's Connectors tab, or `/mcp` in Claude Code) instead of answering from memory. Do not switch to another source, such as a web search or another citation database, unless the user asks, and label anything from another source as not verified by Corbis.
+- If no Corbis tools are available, or a Corbis call returns a sign-in or connection error, first retry the call once through any other Corbis connection in your tool list (the same tool name from another Corbis server). That retry counts toward the quick-mode limit, so skip it when no calls remain. If none works, ask the user to connect or reconnect Corbis (the plugin's Connectors tab, or `/mcp` in Claude Code) instead of answering from memory. Do not switch to another source, such as a web search or another citation database, unless the user asks. Crossref is the named exception, and only as the registry check below states: a DOI the user supplied or a Corbis tool returned, when the metadata looks wrong or the record is missing, one fetch per cited paper, labeled "confirmed by Crossref", never a DOI from memory. Label anything else from another source as not verified by Corbis.
+- Registry check: when a DOI from the user's material or a Corbis record has metadata that looks wrong (authors, year, title), or its paper is missing from Corbis, and you have a web-fetch tool, you may look up that DOI at Crossref (https://api.crossref.org/works/ followed by the DOI), once per cited paper, without asking. Label the result as confirmed by Crossref, not by Corbis. Never look up a DOI you recall from memory. Without a web-fetch tool, mark the paper as not verified.
 
 ## Quick: verify BibTeX
 
@@ -23,7 +24,7 @@ Check references against the Corbis paper index and format them without adding a
 3. Compare the tool's total entry count against how many it actually checked, then report every entry in one of four groups:
    - **Matched:** the entry agrees with the index.
    - **Corrected:** list each changed field as old value and new value. An `author` correction is only a first-author surname hint, not a full author list: keep the user's `author` field and flag the mismatch instead of replacing it.
-   - **Unverifiable:** no confident match. Keep the user's entry as written and say what is missing or ambiguous. Never fill in guessed fields.
+   - **Unverifiable:** no confident match. Keep the user's entry as written and say what is missing or ambiguous. Never fill in guessed fields. If a registry check confirmed the entry's DOI, say so here, but keep Crossref fields out of the corrected block and verified exports.
    - **Not checked:** any entry beyond what the tool actually verified. Never silently drop these.
 4. Give one corrected BibTeX block that uses only the tool's corrections (except `author` hints, per step 3) and the user's original fields.
 5. Offer to format or export the verified list.

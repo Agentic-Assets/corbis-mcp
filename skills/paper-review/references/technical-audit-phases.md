@@ -1,6 +1,11 @@
 # Technical audit phases
 
-Condensed from the Corbis resource `docs://workflow-packs/technical-audit`. If your client can read MCP resources, that resource is the fuller version.
+This file is the long form for a host that has the paper-review skill. The MCP resource `docs://workflow-packs/technical-audit` is the short host contract for a client that never sees these files.
+
+The pack leaves out or compresses the following:
+
+- The verify step here points at `references/report-verification.md`. The pack states the re-check in one phase line: quote, location, and numbers, then drop a candidate whose quote fails or that the paper already answers.
+- A finding here names severity, category, a short title, location, the exact quote, the problem, why the quote supports the finding, and a concrete fix. The pack folds that list into one template sentence.
 
 ## Phases
 
@@ -11,6 +16,7 @@ Condensed from the Corbis resource `docs://workflow-packs/technical-audit`. If y
 5. **Results:** table logic, figure interpretation, robustness, and consistency across sections.
 6. **References and citations:** support for cited claims and bibliography health. Use `verify_bibtex` when the user supplies BibTeX.
 7. **Synthesis:** merge phase notes into candidate findings.
+8. **Verify:** re-check every candidate's quote, location and numbers against the text (claim-type checks in `references/report-verification.md`). Move a candidate to Dropped Candidates if its quote does not match or the problem is already addressed elsewhere in the paper.
 
 ## Finding format
 
@@ -34,8 +40,10 @@ Each finding: severity, category, location, quote, issue, evidence, and suggeste
 Candidates left out and why.
 
 ## Limitations
-Missing files, appendices, code, or data. Label the report "Local review" when no scored evaluation ran.
+Missing files, appendices, code, or data.
 ```
+
+When no scored evaluation ran, say in your reply, not in the report body, that this is a local review.
 
 ## Scored evaluation input (enterprise)
 
