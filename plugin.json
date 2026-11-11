@@ -1,7 +1,7 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "corbis",
-  "version": "0.4.0",
+  "version": "0.5.1",
   "description": "Source-grounded research in finance, real estate, and economics: cited real estate investment and portfolio allocation briefs, literature reviews, citation checks, and referee-style paper reviews through the Corbis research connector.",
   "author": {
     "name": "Agentic Assets"
@@ -99,7 +99,7 @@
         }
       },
       "publication": {
-        "release_notes": "Version 0.4.0 adds real estate investment and portfolio allocation briefs for industry professionals, with cited evidence, investor constraints, implementation tradeoffs and diligence questions. The package retains literature reviews, citation checks, paper reviews and the Corbis MCP connection. Host support and account permissions determine available behavior.",
+        "release_notes": "Version 0.5.1 adds Skills CLI installation guidance, public skill links, and grouped browsing on skills.sh. Paper-review lets users verify an existing referee report against the manuscript, with claim checks, recomputed numbers, and a verification log, and keeps process notes out of the report. Citations, literature review, and paper review may confirm a user-supplied or Corbis DOI at Crossref when the metadata looks wrong or the record is missing, labeled as confirmed by Crossref. The package also adds a 512 px Corbis mark for directory listings and retains the investment briefs and the Corbis MCP connection. Host support and account permissions determine available behavior.",
         "countries": []
       }
     }

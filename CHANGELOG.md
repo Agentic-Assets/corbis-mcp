@@ -2,9 +2,18 @@
 
 All notable changes to this plugin are documented here.
 
-## Unreleased
+## 0.5.1
+
+- Add Skills CLI installation guidance, links to the individual public skill pages, and skills.sh repository-page groupings.
+- Clarify that installing skill instructions and connecting Corbis are separate steps.
+
+## 0.5.0
 
 - Added a 512 px PNG of the Corbis mark for directory listings and replaced the 48 px Codex and Cursor icon with it.
+- paper-review: add a mode that verifies an existing referee report against the manuscript, with a claim ledger, recomputed numbers, full-text checks of absence claims, and a verification log.
+- paper-review: run a verification and calibration pass on every report before delivery, credit caveats the authors already state, and keep process notes out of the report the editor forwards.
+- paper-review: use an editor-facing report template with a confidential note to the editor and a source appendix.
+- citations, literature-review, and paper-review: allow one Crossref lookup per cited paper, labeled "confirmed by Crossref", when a user-supplied or Corbis DOI looks wrong or the record is missing.
 
 ## 0.4.0
 
