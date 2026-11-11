@@ -1,0 +1,27 @@
+name: Observe public skills collection
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  collection:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - name: Test observer
+        run: python3 -m unittest discover -s .github/tests -p 'test_*.py'
+      - name: Observe skills.sh collection after publication
+        if: github.event_name != 'pull_request'
+        env:
+          PUBLIC_SOURCE: ${{ github.repository }}
+        run: |
+          printf 'Public commit: %s\n' "$(git rev-parse HEAD)"
+          date -u '+Observed at: %Y-%m-%dT%H:%M:%SZ'
+          python3 .github/scripts/check_skills_sh_collection.py --source "$PUBLIC_SOURCE"
