@@ -25,7 +25,8 @@ Review a manuscript the way a careful referee would, or verify and tighten a ref
   - **Quick:** the five most important issues.
   - **Referee report:** a full report for the editor and authors.
   - **Technical audit:** specific technical findings, each with an exact quote.
-  - **Verify a report:** the user has a draft report and wants it checked against the paper, fixed where wrong, and possibly tightened. Phrases like "double check", "verify", "make sure we're not overstating", or "don't change much" signal this mode.
+  - **Verify a report:** only when a draft report is already present (the user's, or a draft already written in this conversation) and the user wants that report checked against the manuscript. A manuscript-only request, including a request to double-check the identification, is not this mode.
+- Phrases such as "double check", "verify", "make sure we're not overstating", and "don't change much" do not by themselves select Verify a report, and they do not lift the 5-call cap.
 - Note how much change the user wants. "It's already in good shape" or "don't change much" means fix verified errors and imprecision only, and list everything else as optional suggestions for the user to decide on.
 - Send Corbis short search queries and summaries, not the full manuscript text.
 - When you can run code, convert PDF and Word inputs to plain text once (for example `pdftotext -layout` or `pandoc -t plain`) so you can search them. Absence claims and quotes are only as good as your search.
@@ -39,7 +40,11 @@ Review a manuscript the way a careful referee would, or verify and tighten a ref
 
 ## Full review (referee report or technical audit)
 
-Follow `references/referee-report-phases.md` for a referee report or `references/technical-audit-phases.md` for a technical audit. Those files are the long form. `docs://workflow-packs/referee-report` and `docs://workflow-packs/technical-audit` are the short host contract for a client that never sees this skill. Each phase file lists what that pack leaves out.
+On a paid plan, start a referee report by calling `referee_report_procedure` and follow the stages it returns on your own model; Corbis supplies the procedure and retrieval, not the review. Before delivering, call `referee_report_check` with the recommendation, must-address issues, and citation evidence, fix every failed check, and keep the check result out of the report. If either tool is missing from your tool list or returns an access or plan error, say once in your reply that the Corbis procedure needs a paid plan, then use the phase file below. Never retry a denied tool.
+
+A technical audit works the same way on a paid plan: call `technical_audit_procedure`, run its stages on your own model, and run the verification and calibration passes below on the draft. Call `technical_audit_check` last, with every finding and dropped candidate, fix every failed check (calling it again after those edits), and keep the check result out of the report. If either tool is missing or denied, say so once in your reply and use the phase file below.
+
+When a procedure tool ran, its stages and report template replace the phase file: a technical audit then keeps dropped candidates out of the report and shows only unresolved major or critical items under Manual Review. Otherwise, follow `references/referee-report-phases.md` for a referee report or `references/technical-audit-phases.md` for a technical audit. Those files are the long form. `docs://workflow-packs/referee-report` and `docs://workflow-packs/technical-audit` are the short host contract for a client that never sees this skill. Each phase file lists what that pack leaves out.
 
 Evidence tools during the phases:
 
@@ -47,11 +52,13 @@ Evidence tools during the phases:
 - Bibliography health (technical audit): `verify_bibtex` on the manuscript's references when the user supplies BibTeX.
 - Reference list for papers you cite in the report: `render_citations`.
 
-Before delivering, run the verification pass in `references/report-verification.md` and the calibration pass in `references/calibration-checklist.md` on your own draft. A fresh draft fails the same ways a user's draft does. Deliver the report in the template from the phase reference, or in the user's own structure when they have one.
+Before delivering, run the verification pass in `references/report-verification.md` and the calibration pass in `references/calibration-checklist.md` on your own draft. A fresh draft fails the same ways a user's draft does. Deliver the report in the procedure's template when a procedure tool ran, otherwise in the template from the phase reference, or in the user's own structure when they have one.
 
 ## Verify a report
 
 Follow `references/report-verification.md` for the claim ledger, arithmetic, edit rules, and the verification log. Follow `references/calibration-checklist.md` for tone, overstatement, and trimming. In short:
+
+Use this section only when a draft report is already present. A manuscript-only request is not verify mode. When a draft report is present, this mode is full mode: the 5-call cap does not apply. Build the full claim ledger, and look up every DOI the report cites with `get_paper_details_batch`, in as few calls as possible. That lookup is abstract-grade and does not prove a characterization the abstract does not contain.
 
 1. Work from copies. When you work with files, never edit the user's files in place: save each revision as a new version (for example `_v2`, `_v3`) next to the original. In a chat without file access, return the revised text in your reply.
 2. If there are several versions of the report, compare them first, ignoring formatting, so you know which text is current and whether older copies differ in substance.
@@ -68,7 +75,7 @@ Treat what they return as candidates. Re-check each one against the source befor
 
 ## Citations
 
-- Look up every DOI the report cites with `get_paper_details_batch`, in as few calls as possible.
+- Look up every DOI the report cites with `get_paper_details_batch`, in as few calls as possible. That lookup is abstract-grade and does not prove a characterization the abstract does not contain.
 - Corbis metadata can be wrong: online-first years differ from print years, and author disambiguation can attach a different person with a similar name. When a record looks off, or a cited paper is missing from Corbis, use the Crossref check in the ground rules.
 - Check titles word for word. A dropped word in a title is a real error.
 
@@ -83,7 +90,7 @@ Keep process notes (tool limits, what you could not verify, "local review") out 
 
 After the local report, on enterprise plans:
 
-- Referee report: call `referee_report_evaluate` with the summary contract in `references/referee-report-phases.md`. The sealed markdown is an extra artifact. It must not replace the verified local report.
-- Technical audit: call `technical_audit_evaluate` with the findings contract in `references/technical-audit-phases.md`.
+- Referee report: call `referee_report_evaluate` with the summary contract in `references/referee-report-phases.md`. The sealed markdown is an extra artifact. It must not replace the local report.
+- Technical audit: call `technical_audit_evaluate` with the findings contract in `references/technical-audit-phases.md`. The sealed markdown is an extra artifact. It must not replace the local technical audit. `droppedFindings` reasons are host-reply notes and must not be copied into Dropped Candidates.
 
 If the tool is unavailable or denied, deliver the local report and say once, in your reply rather than inside the report, that this is a local review and the scored evaluation needs an enterprise plan.

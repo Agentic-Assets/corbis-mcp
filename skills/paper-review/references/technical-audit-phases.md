@@ -47,7 +47,7 @@ When no scored evaluation ran, say in your reply, not in the report body, that t
 
 ## Scored evaluation input (enterprise)
 
-`technical_audit_evaluate` takes candidate findings, not the manuscript.
+`technical_audit_evaluate` takes candidate findings, not the manuscript. The sealed markdown is an extra artifact. It must not replace the local technical audit written from the template above. `droppedFindings` reasons are host-reply notes and must not be copied into Dropped Candidates. That section is only for candidates you dropped in the local review.
 
 ```json
 {

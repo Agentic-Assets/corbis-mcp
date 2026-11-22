@@ -45,6 +45,8 @@ Managed synthesis upgrade: if the user asks Corbis to write the synthesis itself
 
 ## Claim check
 
+A request to verify or double-check one claim stays on this path. It does not lift the 5-call cap.
+
 1. Call `evidence_pack` with the claim, plus any paper IDs already retrieved in this conversation.
 2. `evidence_pack` returns abstract-level evidence, not a verdict. Report which returned papers appear to bear on the claim and in which direction, labeled as abstract-level leads, or say the evidence is insufficient. Do not call the claim supported or contradicted unless you inspected the relevant paper with `get_paper_details_batch` (or the user supplied its text); otherwise say that confirming it needs a closer read. Cite each paper you rely on and quote only text the tool returned.
 3. Scored verification upgrade: on enterprise plans, `claim_verification` gives a scored verdict. Offer it only after the Tier 1 answer, and follow the ground rules if it is unavailable or denied.

@@ -2,6 +2,19 @@
 
 All notable changes to this plugin are documented here.
 
+## 0.5.4
+
+- paper-review: on paid plans, a technical audit follows the Corbis technical-audit procedure (`technical_audit_procedure`) on your own model, with adversarial verification of every finding, and is checked with `technical_audit_check` before delivery. Without a paid plan the skill uses its phase file as before.
+
+## 0.5.3
+
+- paper-review: on paid plans, a referee report follows the Corbis referee procedure (`referee_report_procedure`) on your own model, contribution first, and is checked with `referee_report_check` before delivery. Without a paid plan the skill uses its phase file as before.
+
+## 0.5.2
+
+- paper-review: verifying a draft report that is already present is full mode, so the 5-call cap does not apply. A bare verify or double-check request without that report stays on its own path.
+- paper-review and the MCP workflow evaluators: sealed referee and technical-audit markdown stays an extra artifact beside the local report, and dropped-finding reasons stay out of it.
+
 ## 0.5.1
 
 - Add Skills CLI installation guidance, links to the individual public skill pages, and skills.sh repository-page groupings.
@@ -9,8 +22,7 @@ All notable changes to this plugin are documented here.
 
 ## 0.5.0
 
-- Added a 512 px PNG of the Corbis mark for directory listings and replaced the 48 px Codex and Cursor icon with it.
-- paper-review: add a mode that verifies an existing referee report against the manuscript, with a claim ledger, recomputed numbers, full-text checks of absence claims, and a verification log.
+- paper-review: add a mode that verifies an existing referee report against the manuscript, with a claim ledger, recomputed numbers, full-text checks of absence claims, and a verification log. This release raises the plugin from 0.4.0 to 0.5.0.
 - paper-review: run a verification and calibration pass on every report before delivery, credit caveats the authors already state, and keep process notes out of the report the editor forwards.
 - paper-review: use an editor-facing report template with a confidential note to the editor and a source appendix.
 - citations, literature-review, and paper-review: allow one Crossref lookup per cited paper, labeled "confirmed by Crossref", when a user-supplied or Corbis DOI looks wrong or the record is missing.
@@ -26,6 +38,7 @@ All notable changes to this plugin are documented here.
 
 ## 0.3.1
 
+- Added a 512 px PNG of the Corbis mark for directory listings and replaced the 48 px Codex and Cursor icon with it. The file landed in-tree at 6a0f512f4 while the manifest was 0.3.0 and was already in this package. It is not a 0.4.0 or 0.5.0 change.
 - Add OpenAI listing copy, conversation starters, review cases and release notes, with all-supported-countries targeting.
 - Link the synthetic reference-audit PDF and BibTeX fixtures used by the review case.
 - Keep the Codex interface aligned and raise compatible host manifest versions together.

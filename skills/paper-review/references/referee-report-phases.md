@@ -64,7 +64,7 @@ Keep process notes (tool limitations, "Local review", what you could not verify)
 
 ## Scored evaluation input (enterprise)
 
-`referee_report_evaluate` takes summaries, not the manuscript. Include only citation evidence that came from Corbis tools. The sealed markdown is an extra artifact. It must not replace the verified local report.
+`referee_report_evaluate` takes summaries, not the manuscript. Include only citation evidence that came from Corbis tools. A paper confirmed only by Crossref stays out of `citationEvidence` and may be named in the local report when labeled "confirmed by Crossref". The evaluator has no provenance field: a row the host sends is rendered as title and year with no Crossref label. The sealed markdown is an extra artifact. It must not replace the local report.
 
 ```json
 {
