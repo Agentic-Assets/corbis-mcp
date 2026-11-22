@@ -19,6 +19,8 @@ Check references against the Corbis paper index and format them without adding a
 
 ## Quick: verify BibTeX
 
+A request to verify or double-check BibTeX stays on this quick path. Keep the 5-call cap and the offer of full mode.
+
 1. Take the BibTeX the user pasted or uploaded. If they gave formatted references instead, ask whether to convert them to BibTeX entries first, and convert only the fields they wrote.
 2. Call `verify_bibtex`, setting `maxEntries` to the number of entries you have, up to the tool's maximum. A bibliography that needs more than one call to cover, staying within 5 total Corbis tool calls, can split across calls in quick mode; a bibliography that needs more than 5 calls does not fit quick mode, so say so and offer full mode instead.
 3. Compare the tool's total entry count against how many it actually checked, then report every entry in one of four groups:
